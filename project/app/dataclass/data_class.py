@@ -1,3 +1,4 @@
+from logging import exception
 import os
 import datetime
 from distutils.command.build import build
@@ -6,13 +7,11 @@ import asyncio
 from textwrap import indent 
 import httpx
 
-from flightradar.api import API
+from .flightradar.api import API
 from models import *
-from db import build_uri
-# from . import crud
+import db
 
 from sqlmodel import create_engine
-
 
 HEADERS = {'Connection': 'keep-alive',
            'User-Agent': ('Mozilla/5.0 (Windows NT 10.0; Win64; '
@@ -32,55 +31,83 @@ class Data:
         self.detailed = []  
                     
     def get_data(self):
-        # area = Area(Point(37.8, 37.6), Point(-121.90, -121.78))
-        area = Area(Point(59.06, 50.00), Point(30.97, 36.46))
+        p1_coords = {"lat" : 37.8, "lon" : 37.6} # PTOWN
+        p2_coords = {"lat" : -121.90, "lon" : -121.78}
+        
+        
+        p1_coords = {"lat" : 59.06, "lon" : 50.00}
+        p2_coords = {"lat" : 30.97, "lon" : 36.46}
+
+        p1 = Point(**p1_coords)
+        p2 = Point(**p2_coords)
+
+        mapp = {"sw" : p1, "ne" : p2}
+        area = Area(**mapp)
         return self.parse_data(json.loads(self.api.get_area(area)))
             
     def parse_data(self, data):
         briefs = [BriefFlightCreate(**data[item]) for item in data]
         return [flight.id for flight in briefs]
     
-    def _debug(self, r):
-        data = r.json()["airline"]
-        print()
-        # print(Identification(**data))
-        return(json.dumps(data, indent=4, sort_keys=False))
+        # return(json.dumps(data, indent=4, sort_keys=False))
     
     async def make_request_async(self, flight_id, client):
-        r = await client.get(self.API_STRING.format(flight_id=flight_id))
-        print(self._debug(r))
-        
-        data = r.json()        
-        identification = Identification(**data["identification"])
-        
-        model = Model(**data["aircraft"]["model"])
-        
-        aircraft = Aircraft(
-            country_id=data["aircraft"]["countryId"],
-            registration=data["aircraft"]["registration"],
-            hex=data["aircraft"]["hex"],
-            age=data["aircraft"]["msn"],
-            model=model.dict()
-        )       
-        
-        print(json.dumps(data["aircraft"], indent=4, sort_keys=False))        
-        # code = Code(**data["airline"]["code"])
-        # airline = Airline(
-        #     name=data["airline"]["name"],
-        #     short=data["airline"]["short"],
-        #     code=code.dict()
-        # )
+        try:
+            print("==================BEGIN TRY BLOCK==================")
+            r = await client.get(self.API_STRING.format(flight_id=flight_id))
+                    
+            data = r.json()        
+            print(json.dumps(data, indent=4, sort_keys=False))
+            identification = Identification(**data["identification"])
+            
+            model = Model(**data["aircraft"]["model"])
+            
+            aircraft = Aircraft(
+                country_id=data["aircraft"]["countryId"],
+                registration=data["aircraft"]["registration"],
+                hex=data["aircraft"]["hex"],
+                age=data["aircraft"]["msn"],
+                model=model.dict()
+            )       
+            
+            code_expected_fields = [field for field in Code.__fields__]
+            if not (data["airline"].get("iata") is None):
+                print("value is present for a given JSON key")
+                print(data["airlies"].get("iata"))
+            else:
+                print("Using a default value for a given key")
+                print(data["airline"].get("iata"), "no_iata")
 
-        detailed = DetailedFlightCreate(
-                        identification=identification.dict(),
-                        # airline=airline.dict(),
-                        aircraft=aircraft.dict()
-        )
+            code = Code(**data["airline"]["code"])
+                
+            print(json.dumps(data["airline"], indent=4, sort_keys=False))
+            # try:
+            #     code = Code(**data["airline"]["code"])
+            #     # print(code)
+            # except Exception as e:
+            #     code = Code()
+                # print("*"*50,"NULL", code)
+
+            
+            # airline = Airline(
+            #     name=data["airline"]["name"],
+            #     short=data["airline"]["short"],
+            #     code=code.dict()
+            # )
+            # print(airline.short)
+            
+            # detailed = DetailedFlightCreate(
+            #                 identification=identification.dict(),
+            #                 airline=airline.dict(),
+            #                 aircraft=aircraft.dict()
+            # )
         
         # print(f"detailed: {detailed}")
-        
-        self.detailed.append(detailed)      
-        
+        # self.detailed.append(detailed) 
+             
+        except Exception as e:
+            print("issue...skipping")
+
     async def async_main(self):
         overhead_ids = self.get_data()
         async with httpx.AsyncClient() as client:
@@ -99,16 +126,3 @@ class Data:
         return f"{len(self.detailed)}" 
   
 
-
-if __name__ == "__main__":
-    obj = Data()    
-    print(obj)
-    data = obj.run() # dictionary
-    print(type(data))
-    # print(data)
-
-    print()
-    DATABASE_URL = build_uri()
-    engine = create_engine(DATABASE_URL, echo=False, future=True)
-    SQLModel.metadata.drop_all(engine)
-    SQLModel.metadata.create_all(engine)

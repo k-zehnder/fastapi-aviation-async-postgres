@@ -6,25 +6,7 @@ from pydantic import BaseModel, validator
 import datetime
 
 
-class UserBase(SQLModel):
-    name: str
-    
-    class Config:
-        orm_mode = True
-        
-class User(UserBase, table=True):
-    id: int = Field(default=None, primary_key=True)
-    
-    responses: List["Response"] = Relationship(back_populates="user")
-    
-class DetailedFlightResponseLink(SQLModel, table=True):
-    response_id: Optional[int] = Field(
-        default=None, foreign_key="response.id", primary_key=True
-    )
-    detailedflight_id: Optional[int] = Field(
-        default=None, foreign_key="detailedflight.id", primary_key=True
-    )
-    
+
 class Identification(BaseModel):
     identification: str = Field(default=None, primary_key=False, alias="id")
     callsign: str = Field(default=None, primary_key=False)
@@ -45,10 +27,6 @@ class ResponseBase(SQLModel):
     
 class Response(ResponseBase, table=True):
     id: int = Field(default=None, primary_key=True)
-    user_id: int = Field(default=None, foreign_key="user.id")
-    user: Optional[User] = Relationship(back_populates="responses")
-
-    flights: List["DetailedFlight"] = Relationship(link_model=DetailedFlightResponseLink)
     
     class Config:
         orm_mode = True
@@ -65,45 +43,42 @@ class DetailedFlight(DetailedFlightBase, table=True):
 class ResponseRead(ResponseBase):
     db_data: List[DetailedFlight]
     
-class UserCreate(UserBase):
-    pass
 
 class ResponseCreate(ResponseBase):
     pass
 
 class Code(BaseModel):
-    iata: str = None
-    icao: str = None
+    iata: Optional[str] = "iata_default"
+    icao:Optional[str] = "icao_default"
 
     # @validator("iata")
     # def is_valid_icao(cls, icao):
     #     return icao == "valid"
 
 class Airline(BaseModel):
-    name: str = None
-    short: str = None
-    url: str = None
-    code: Code = None
+    name: Optional[str] = "default_name"
+    short: Optional[str] = "default_short"
+    url: Optional[str] = "default_url"
+    code: Optional[Code] = "default_code"
 
 class Model(BaseModel):
-    code: str = None
-    text: str = None
+    code: Optional[str] = "code_default"
+    text: Optional[str] = "text_default"
 
 class Aircraft(BaseModel):
-    countryId: int = None
-    registration: str = None
-    hex: str = None
-    age: str = None
-    msn: str = None
-    images: List[str] = None
-    model: Model
+    countryId: Optional[int] = "optional_countryId"
+    registration: Optional[str] = "optional_registration"
+    hex: Optional[str] = "optional_hex"
+    age: Optional[str] = "optional_age"
+    msn: Optional[str] = "optional_msn"
+    images: Optional[List[str]] = "optional_images"
+    model: Optional[Model] = "optional_model"
 
-# Properties to receive via API on creation      
-#NOTE: AllFlightRead INHERIT FROM REGULAR NOT SQLMODEL!      
+    
 class DetailedFlightCreate(DetailedFlightBase):
     identification: Identification
     aircraft: Aircraft
-    # airline: Airline
+    airline: Airline
     
 class ResponseCreate(ResponseBase):
     pass
@@ -144,6 +119,25 @@ class BriefFlight(BriefFlightBase):
 
 class BriefFlightCreate(BriefFlightBase):
     pass
+
+class PointPyd(BaseModel):
+    lat: float = 0.0
+    lon: float = 0.0
+    
+    def __str__(self) -> str:
+        return '({}, {})'.format(self.lat, self.lon) 
+class Area(BaseModel):
+    sw: PointPyd
+    ne: PointPyd
+
+    def __str__(self) -> str:
+        """Allows to unpack data this way: *area"""
+        return '{}, {}, {}, {}'.format(self.sw.lat, self.sw.lon,
+                                       self.ne.lat, self.ne.lon)
+    def __iter__(self):
+        return (coord for coord in (self.sw.lat, self.sw.lon,
+                                       self.ne.lat, self.ne.lon))
+    
 # FR models
 class Point:
     def __init__(self, lat: float, lon: float):
