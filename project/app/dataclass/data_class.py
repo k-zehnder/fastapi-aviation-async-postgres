@@ -87,7 +87,7 @@ class Data:
         if data.get("airline") is None:
             print("AIRLINE DOESNT EXIST")
             data["airline"] = data.get("airline", "airline")
-            # data["airline"] = data.get("airline", "airline")    
+            data["airline"] = Airline(**data["airline"])
             print(data["airline"])
         else:
             print("AIRLINE EXISTS")
