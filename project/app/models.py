@@ -38,11 +38,13 @@ class DetailedFlightBase(SQLModel):
     identification: str = Field(default=None, primary_key=False)
     
     response_id: Optional[int]= Field(default=None, foreign_key="response.id")
+    class Config:
+        orm_mode = True
     
 class DetailedFlight(DetailedFlightBase, table=True):
     id: int = Field(default=None, primary_key=True)
     
-    response: Optional[Response] = Relationship(back_populates="flights")
+    response: Optional[Response] = Relationship(back_populates="flights") # allows many-to-one side
     
     class Config:
         orm_mode = True
@@ -72,7 +74,7 @@ class Identification(BaseModel):
     class Config:
         orm_mode = True 
         allow_population_by_field_name=True
-        
+
 class Code(BaseModel):
     iata: Optional[str] = Field(default=None, primary_key=False)
     icao:Optional[str] = Field(default=None, primary_key=False)
@@ -98,16 +100,18 @@ class Model(BaseModel):
         orm_mode = True 
 
 class Aircraft(BaseModel):
-    countryId: Optional[int] = Field(default=None, primary_key=False)
+    country_id: Optional[int] = Field(default=None, primary_key=False, alias="countryId")
     registration: Optional[str] = Field(default=None, primary_key=False)
     hex: Optional[str] = Field(default=None, primary_key=False)
-    age: Optional[str] = Field(default=None, primary_key=False)
+    # age: int = None
+    age: Optional[int] = Field(default=None, primary_key=False)
     msn: Optional[str] = Field(default=None, primary_key=False)
     images: Optional[List[str]] = Field(default=None, primary_key=False)
-    model: Optional[Model] = Field(default=None, primary_key=False)
+    model: Optional[Model]
     class Config:
         orm_mode = True 
-    
+        allow_population_by_field_name = True
+        
 class DetailedFlightCreate(DetailedFlightBase):
     identification: Identification
     aircraft: Aircraft

@@ -51,11 +51,16 @@ class Data:
         return [flight.id for flight in briefs]
     
     async def make_request_async(self, flight_id, client):
+        counter = 0
         r = await client.get(self.API_STRING.format(flight_id=flight_id))
 
         data = r.json()
-        # print(data["identification"]["number"])
+        print(json.dumps(data, indent=4, sort_keys=False))
         
+        # print(data["identification"]["number"])
+        if "number" not in data["identification"]:
+            print("no number!")
+            pass
         number = NumberCreate(**data["identification"]["number"])
         # print(f"number: {number}")
         
@@ -64,22 +69,29 @@ class Data:
                 callsign=data["identification"]["callsign"],
                 number=number.dict()
                 )
-        print(f"identification: {identification}")
-
-        # print(json.dumps(data["aircraft"], indent=4, sort_keys=False))
-        # print(type(data["aircraft"]["model"]))
-        # print(data["aircraft"]["model"])
-        # model = Model(**data["aircraft"]["model"])
-        # print(model)
+        # print(f"identification: {identification}")
         
+        # print(data["identification"]["number"])
+        # if "model" not in data["aircraft"]:
+        #     print("no model!")
+        #     pass
+            # data["aircraft"].get("model", "model")
+            # print(data["aircraft"]["model"])
+            
+        model = Model(**data["aircraft"]["model"])
+        print(f"model: {model}")
         
-        # aircraft = Aircraft(
-        #     country_id=data["aircraft"]["countryId"],
-        #     registration=data["aircraft"]["registration"],
-        #     hex=data["aircraft"]["hex"],
-        #     age=data["aircraft"]["msn"],
-        #     model=model.dict()
-        # )   
+        aircraft = Aircraft(
+            country_id=data["aircraft"]["countryId"],
+            registration=data["aircraft"]["registration"],
+            hex=data["aircraft"]["hex"],
+            age=data["aircraft"]["msn"],
+            model=model.dict()
+        )   
+        print(f"aircraft: {aircraft}")
+        counter += 1
+        if counter > 1:
+            pass        
 
         # code = Code(**data["airline"]["code"])
             

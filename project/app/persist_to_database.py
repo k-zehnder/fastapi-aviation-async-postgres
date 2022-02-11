@@ -52,6 +52,7 @@ async def async_main(data):
                 name="controller1",
                 time_created=datetime.datetime.now()
             )
+            # r1.flights = data["detailed"]
             
             print(data.keys()) # time, detailed
             print(data["detailed"])
