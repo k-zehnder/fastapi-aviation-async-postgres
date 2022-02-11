@@ -1,14 +1,22 @@
 from codecs import Codec
+from time import strftime
 from tokenize import String
 from sqlmodel import SQLModel, Field, Relationship, Column, DateTime
 from typing import List, Optional, Any, Type
-from pydantic import BaseModel, validator, parse_obj_as
+from pydantic import BaseModel, PydanticValueError, ValidationError, validator
 import datetime
 
+class ImpossibleSpeedError(PydanticValueError):
+    code = 'impossible_speed'
+    msg_template = 'a speed of {speed} is not possible.'
+
+class NotCorrectTypeError(PydanticValueError):
+    code = 'demo_custom_errors'
+    msg_template = 'invalid icao code: {icao}.'
 
         
 class ResponseBase(SQLModel):
-    name: Optional[str] = Field(default="name_default", primary_key=False)
+    name: Optional[str] = Field(default=None, primary_key=False)
     time_created: datetime.datetime = Field(
         sa_column=Column(
             DateTime(timezone=True),
@@ -77,11 +85,13 @@ class Identification(BaseModel):
 
 class Code(BaseModel):
     iata: Optional[str] = Field(default=None, primary_key=False)
-    icao:Optional[str] = Field(default=None, primary_key=False)
+    icao: Optional[str] = Field(default=None, primary_key=False)
 
-    # @validator("iata")
-    # def is_valid_icao(cls, icao):
-    #     return icao == "valid"
+    @validator("icao")
+    def is_valid_icao(cls, icao):
+        if type(icao) == isinstance(icao, list):
+            raise NotCorrectTypeError(icao=icao)
+    
     class Config:
         orm_mode = True 
         
@@ -103,7 +113,6 @@ class Aircraft(BaseModel):
     country_id: Optional[int] = Field(default=None, primary_key=False, alias="countryId")
     registration: Optional[str] = Field(default=None, primary_key=False)
     hex: Optional[str] = Field(default=None, primary_key=False)
-    # age: int = None
     age: Optional[int] = Field(default=None, primary_key=False)
     msn: Optional[str] = Field(default=None, primary_key=False)
     images: Optional[List[str]] = Field(default=None, primary_key=False)
@@ -144,7 +153,7 @@ class BriefFlightBase(BaseModel):
     @validator("speed")
     def speed_sanity_check(cls, speed):
         if speed > 1000:
-            raise ValueError("speed invalid.")
+            raise ImpossibleSpeedError(speed=speed)
         return speed
     
     class Config:

@@ -35,7 +35,6 @@ class Data:
         # p1_coords = {"lat" : 37.8, "lon" : 37.6} # PTOWN
         # p2_coords = {"lat" : -121.90, "lon" : -121.78}
         
-        
         p1_coords = {"lat" : 59.06, "lon" : 50.00}
         p2_coords = {"lat" : 30.97, "lon" : 36.46}
 
@@ -44,6 +43,7 @@ class Data:
 
         mapp = {"sw" : p1, "ne" : p2}
         area = Area(**mapp)
+        
         return self.parse_data(json.loads(self.api.get_area(area)))
             
     def parse_data(self, data):
@@ -51,32 +51,24 @@ class Data:
         return [flight.id for flight in briefs]
     
     async def make_request_async(self, flight_id, client):
-        counter = 0
+        counts = 0
         r = await client.get(self.API_STRING.format(flight_id=flight_id))
 
         data = r.json()
-        print(json.dumps(data, indent=4, sort_keys=False))
         
-        # print(data["identification"]["number"])
-        if "number" not in data["identification"]:
-            print("no number!")
-            pass
+        # if counts < 1:
+        #     print(json.dumps(data, indent=4, sort_keys=False))
+        # counts += 1
+        
         number = NumberCreate(**data["identification"]["number"])
-        # print(f"number: {number}")
+        print(f"number: {number}")
         
         identification = Identification(
                 identification=data["identification"]["id"],
                 callsign=data["identification"]["callsign"],
                 number=number.dict()
                 )
-        # print(f"identification: {identification}")
-        
-        # print(data["identification"]["number"])
-        # if "model" not in data["aircraft"]:
-        #     print("no model!")
-        #     pass
-            # data["aircraft"].get("model", "model")
-            # print(data["aircraft"]["model"])
+        print(f"identification: {identification}")
             
         model = Model(**data["aircraft"]["model"])
         print(f"model: {model}")
@@ -89,10 +81,28 @@ class Data:
             model=model.dict()
         )   
         print(f"aircraft: {aircraft}")
-        counter += 1
-        if counter > 1:
-            pass        
+        print()
+        print()
+        
+        if data.get("airline") is None:
+            print("AIRLINE DOESNT EXIST")
+            data["airline"] = data.get("airline", "airline")
+            # data["airline"] = data.get("airline", "airline")    
+            print(data["airline"])
+        else:
+            print("AIRLINE EXISTS")
+            print(data["airline"])
 
+        
+        if data["airline"].get("code") is None:
+            print("CODE DOESNT EXIST")
+            data["airline"].get("code", "code")
+            data["airline"]["code"] = Code(iata="none", icao="none")
+            print(data["airline"]["code"])
+        else:
+            print("CODE EXISTS")
+            print(data["airline"]["code"])
+              
         # code = Code(**data["airline"]["code"])
             
         # print(json.dumps(data["airline"], indent=4, sort_keys=False))
@@ -109,7 +119,7 @@ class Data:
         #     short=data["airline"]["short"],
         #     code=code.dict()
         # )
-        # print(airline.short)
+        # print(airline.short, airline.code)
         
         # detailed = DetailedFlightCreate(
         #                 identification=identification.dict()
