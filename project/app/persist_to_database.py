@@ -66,12 +66,3 @@ async def async_main(data):
     await engine.dispose()
     
     
-if __name__ == "__main__":
-    print()
-
-    # LIVE DATA
-    data = Data()
-    data = data.run()
-    print(data)
-    
-    asyncio.run(async_main(data))

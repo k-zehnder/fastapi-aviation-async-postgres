@@ -1,23 +1,19 @@
-import sqlmodel
-from sqlmodel import create_engine, SQLModel
+import asyncio
 
 from models import *
-from db import build_uri
 # from . import crud
+
+from persist_to_database import async_main
 
 from dataclass.flightradar.api import API
 from dataclass.data_class import Data
 
 if __name__ == "__main__":
-    obj = Data()    
-    print(obj)
-    data = obj.run() # dictionary
-    print(type(data))
-    # print(data)
-
     print()
-    DATABASE_URL = build_uri()
-    engine = create_engine(DATABASE_URL, echo=False, future=True)
-    SQLModel.metadata.drop_all(engine)
-    SQLModel.metadata.create_all(engine)
+
+    # LIVE DATA
+    data = Data()
+    data = data.run()
+    print(data)
     
+    asyncio.run(async_main(data))
