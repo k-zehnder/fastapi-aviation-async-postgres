@@ -2,13 +2,20 @@ from codecs import Codec
 from tokenize import String
 from sqlmodel import SQLModel, Field, Relationship, Column, DateTime
 from typing import List, Optional, Any, Type
-from pydantic import BaseModel, validator, parse_obj_as
+from pydantic import BaseModel, validator
 import datetime
 
 
+
+class Identification(BaseModel):
+    identification: str = Field(default=None, primary_key=False, alias="id")
+    callsign: str = Field(default=None, primary_key=False)
+    
+    class Config:
+        orm_mode = True 
+        allow_population_by_field_name=True
         
-class ResponseBase(SQLModel):
-    name: str = Field(index=True)
+class ResponseBase(SQLModel):    
     time_created: datetime.datetime = Field(
         sa_column=Column(
             DateTime(timezone=True),
@@ -33,7 +40,7 @@ class DetailedFlightBase(SQLModel):
 class DetailedFlight(DetailedFlightBase, table=True):
     id: int = Field(default=None, primary_key=True)
     
-    response: Optional[Response] = Relationship(back_populates="flights")
+    response: Optional[Response] = Relationship(back_populates="detailedflights")
     
     class Config:
         orm_mode = True
@@ -48,47 +55,33 @@ class ResponseRead(ResponseBase):
 class ResponseCreate(ResponseBase):
     pass
 
-class Number(BaseModel):
-    default: Optional[str] = Field(default="default_default", primary_key=False)
-    alternative: Optional[str] = Field(default="alternative_default", primary_key=False)
-    
-    class Config:
-        orm_mode = True         
-
-class Identification(BaseModel):
-    identification: str = Field(default=None, primary_key=False, alias="id")
-    callsign: str = Field(default=None, primary_key=False)
-    number: Optional[Number] = None
-
-    class Config:
-        orm_mode = True 
-        allow_population_by_field_name=True
 class Code(BaseModel):
-    iata: Optional[str] = Field(default=None, primary_key=False)
-    icao:Optional[str] = Field(default=None, primary_key=False)
+    iata: Optional[str] = "iata_default"
+    icao:Optional[str] = "icao_default"
 
     # @validator("iata")
     # def is_valid_icao(cls, icao):
     #     return icao == "valid"
 
 class Airline(BaseModel):
-    name: Optional[str] = Field(default=None, primary_key=False)
-    short: Optional[str] = Field(default=None, primary_key=False)
-    url: Optional[str] = Field(default=None, primary_key=False)
-    code: Optional[Code] = Field(default=None, primary_key=False)
+    name: Optional[str] = "default_name"
+    short: Optional[str] = "default_short"
+    url: Optional[str] = "default_url"
+    code: Optional[Code] = "default_code"
 
 class Model(BaseModel):
-    code: Optional[str] = Field(default=None, primary_key=False)
-    text: Optional[str] = Field(default=None, primary_key=False)
+    code: Optional[str] = "code_default"
+    text: Optional[str] = "text_default"
 
 class Aircraft(BaseModel):
-    countryId: Optional[int] = Field(default=None, primary_key=False)
-    registration: Optional[str] = Field(default=None, primary_key=False)
-    hex: Optional[str] = Field(default=None, primary_key=False)
-    age: Optional[str] = Field(default=None, primary_key=False)
-    msn: Optional[str] = Field(default=None, primary_key=False)
-    images: Optional[List[str]] = Field(default=None, primary_key=False)
-    model: Optional[Model] = Field(default=None, primary_key=False)
+    countryId: Optional[int] = "optional_countryId"
+    registration: Optional[str] = "optional_registration"
+    hex: Optional[str] = "optional_hex"
+    age: Optional[str] = "optional_age"
+    msn: Optional[str] = "optional_msn"
+    images: Optional[List[str]] = "optional_images"
+    model: Optional[Model] = "optional_model"
+
     
 class DetailedFlightCreate(DetailedFlightBase):
     identification: Identification

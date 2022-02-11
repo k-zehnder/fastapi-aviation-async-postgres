@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites><testsuite name="pytest" errors="1" failures="0" skipped="0" tests="1" time="0.176" timestamp="2022-02-10T12:27:39.630300" hostname="the-bank"><testcase classname="" name="py.fastapi-aviation-async-postgres.project.app.persist_to_json" file="py/fastapi-aviation-async-postgres/project/app/persist_to_json.py" time="0.000"><error message="collection failure">ImportError while importing test module '/home/batman/Desktop/py/fastapi-aviation-async-postgres/project/app/persist_to_json.py'.
+Hint: make sure your test modules/packages have valid Python names.
+Traceback:
+/home/batman/anaconda3/envs/test_env3.9/lib/python3.9/importlib/__init__.py:127: in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+persist_to_json.py:4: in &lt;module&gt;
+    import sqlmodel
+E   ModuleNotFoundError: No module named 'sqlmodel'</error></testcase></testsuite></testsuites>

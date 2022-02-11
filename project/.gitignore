@@ -1,3 +1,4 @@
 **/__pycache__
 database.db
 persist_to_json.py
+hero_models.py

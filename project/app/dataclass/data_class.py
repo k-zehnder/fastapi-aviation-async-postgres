@@ -11,6 +11,7 @@ from .flightradar.api import API
 from models import *
 import db
 
+from pydantic import parse_obj_as
 from sqlmodel import create_engine
 
 HEADERS = {'Connection': 'keep-alive',
@@ -31,8 +32,8 @@ class Data:
         self.detailed = []  
                     
     def get_data(self):
-        p1_coords = {"lat" : 37.8, "lon" : 37.6} # PTOWN
-        p2_coords = {"lat" : -121.90, "lon" : -121.78}
+        # p1_coords = {"lat" : 37.8, "lon" : 37.6} # PTOWN
+        # p2_coords = {"lat" : -121.90, "lon" : -121.78}
         
         
         p1_coords = {"lat" : 59.06, "lon" : 50.00}
@@ -49,64 +50,66 @@ class Data:
         briefs = [BriefFlightCreate(**data[item]) for item in data]
         return [flight.id for flight in briefs]
     
-        # return(json.dumps(data, indent=4, sort_keys=False))
-    
     async def make_request_async(self, flight_id, client):
-        try:
-            print("==================BEGIN TRY BLOCK==================")
-            r = await client.get(self.API_STRING.format(flight_id=flight_id))
-                    
-            data = r.json()        
-            print(json.dumps(data, indent=4, sort_keys=False))
-            identification = Identification(**data["identification"])
-            
-            model = Model(**data["aircraft"]["model"])
-            
-            aircraft = Aircraft(
-                country_id=data["aircraft"]["countryId"],
-                registration=data["aircraft"]["registration"],
-                hex=data["aircraft"]["hex"],
-                age=data["aircraft"]["msn"],
-                model=model.dict()
-            )       
-            
-            code_expected_fields = [field for field in Code.__fields__]
-            if not (data["airline"].get("iata") is None):
-                print("value is present for a given JSON key")
-                print(data["airlies"].get("iata"))
-            else:
-                print("Using a default value for a given key")
-                print(data["airline"].get("iata"), "no_iata")
+        r = await client.get(self.API_STRING.format(flight_id=flight_id))
 
-            code = Code(**data["airline"]["code"])
-                
-            print(json.dumps(data["airline"], indent=4, sort_keys=False))
-            # try:
-            #     code = Code(**data["airline"]["code"])
-            #     # print(code)
-            # except Exception as e:
-            #     code = Code()
-                # print("*"*50,"NULL", code)
-
-            
-            # airline = Airline(
-            #     name=data["airline"]["name"],
-            #     short=data["airline"]["short"],
-            #     code=code.dict()
-            # )
-            # print(airline.short)
-            
-            # detailed = DetailedFlightCreate(
-            #                 identification=identification.dict(),
-            #                 airline=airline.dict(),
-            #                 aircraft=aircraft.dict()
-            # )
+        data = r.json()
         
+        # print(data["identification"]["number"])
+        
+        #number = parse_obj_as(Number, data["identification"]["number"]) #  none is not an allowed value (type=type_error.none.not_allowed)
+
+        print(type(data["identification"]["number"]))
+        print(data["identification"]["number"])
+        number = Number.from_orm(data["identification"]["number"])
+        print(f"number: {number.alternative}")
+        
+        
+        # item_data = data["identification"]["number"]
+        # item = parse_obj_as(Number, item_data)
+        # print(item)
+        # print("======")
+        
+        
+        # print(f"data[aircraft]: ", json.dumps(data["aircraft"], indent=4, sort_keys=False))
+        # print(data["aircraft"]["model"])
+        # model = Model(**data["aircraft"]["model"])
+        # print(model)
+        # aircraft = Aircraft(
+        #     country_id=data["aircraft"]["countryId"],
+        #     registration=data["aircraft"]["registration"],
+        #     hex=data["aircraft"]["hex"],
+        #     age=data["aircraft"]["msn"],
+        #     model=model.dict()
+        # )   
+
+        # code = Code(**data["airline"]["code"])
+            
+        # print(json.dumps(data["airline"], indent=4, sort_keys=False))
+        # try:
+        #     code = Code(**data["airline"]["code"])
+        #     # print(code)
+        # except Exception as e:
+        #     code = Code()
+            # print("*"*50,"NULL", code)
+
+        
+        # airline = Airline(
+        #     name=data["airline"]["name"],
+        #     short=data["airline"]["short"],
+        #     code=code.dict()
+        # )
+        # print(airline.short)
+        
+        # detailed = DetailedFlightCreate(
+        #                 identification=identification.dict()
+                        # airline=airline.dict(),
+                        # aircraft=aircraft.dict()
+        # )
+    
         # print(f"detailed: {detailed}")
         # self.detailed.append(detailed) 
-             
-        except Exception as e:
-            print("issue...skipping")
+
 
     async def async_main(self):
         overhead_ids = self.get_data()
