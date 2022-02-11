@@ -44,9 +44,14 @@ async def async_main(data):
             """
             This is where you add data.
             """
+            inp = {
+                "name": "controller1",
+                "time_created": datetime.datetime.now()
+            }
             r1 = Response(
                 name="controller1",
-                time_created=datetime.datetime.now())
+                time_created=datetime.datetime.now()
+            )
             
             print(data.keys()) # time, detailed
             print(data["detailed"])

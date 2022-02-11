@@ -8,7 +8,7 @@ import datetime
 
         
 class ResponseBase(SQLModel):
-    name: str = Field(index=True)
+    name: Optional[str] = Field(default="name_default", primary_key=False)
     time_created: datetime.datetime = Field(
         sa_column=Column(
             DateTime(timezone=True),
@@ -24,6 +24,15 @@ class Response(ResponseBase, table=True):
     
     class Config:
         orm_mode = True
+        
+class ResponseRead(ResponseBase):
+    id: int
+  
+# class ResponseRead(ResponseBase):
+#     db_data: List[DetailedFlight]
+    
+class ResponseCreate(ResponseBase):
+    pass
 
 class DetailedFlightBase(SQLModel):
     identification: str = Field(default=None, primary_key=False)
@@ -38,23 +47,23 @@ class DetailedFlight(DetailedFlightBase, table=True):
     class Config:
         orm_mode = True
 
-class ResponseRead(ResponseBase):
-    id: int
-  
-# class ResponseRead(ResponseBase):
-#     db_data: List[DetailedFlight]
-    
 
-class ResponseCreate(ResponseBase):
-    pass
-
-class Number(BaseModel):
-    default: Optional[str] = Field(default="default_default", primary_key=False)
-    alternative: Optional[str] = Field(default="alternative_default", primary_key=False)
+class NumberBase(SQLModel):
+    default: Optional[str] = Field(default=None, primary_key=False)
+    alternative: Optional[str] = Field(default=None, primary_key=False)
     
     class Config:
-        orm_mode = True         
+        orm_mode = True     
 
+class Number(NumberBase):
+    id: int = Field(default=None, primary_key=True)
+
+    class Config:
+        orm_mode = True     
+        
+class NumberCreate(NumberBase):
+    pass
+        
 class Identification(BaseModel):
     identification: str = Field(default=None, primary_key=False, alias="id")
     callsign: str = Field(default=None, primary_key=False)
@@ -63,6 +72,7 @@ class Identification(BaseModel):
     class Config:
         orm_mode = True 
         allow_population_by_field_name=True
+        
 class Code(BaseModel):
     iata: Optional[str] = Field(default=None, primary_key=False)
     icao:Optional[str] = Field(default=None, primary_key=False)
@@ -70,16 +80,22 @@ class Code(BaseModel):
     # @validator("iata")
     # def is_valid_icao(cls, icao):
     #     return icao == "valid"
-
+    class Config:
+        orm_mode = True 
+        
 class Airline(BaseModel):
     name: Optional[str] = Field(default=None, primary_key=False)
     short: Optional[str] = Field(default=None, primary_key=False)
     url: Optional[str] = Field(default=None, primary_key=False)
     code: Optional[Code] = Field(default=None, primary_key=False)
+    class Config:
+        orm_mode = True 
 
 class Model(BaseModel):
     code: Optional[str] = Field(default=None, primary_key=False)
     text: Optional[str] = Field(default=None, primary_key=False)
+    class Config:
+        orm_mode = True 
 
 class Aircraft(BaseModel):
     countryId: Optional[int] = Field(default=None, primary_key=False)
@@ -89,6 +105,8 @@ class Aircraft(BaseModel):
     msn: Optional[str] = Field(default=None, primary_key=False)
     images: Optional[List[str]] = Field(default=None, primary_key=False)
     model: Optional[Model] = Field(default=None, primary_key=False)
+    class Config:
+        orm_mode = True 
     
 class DetailedFlightCreate(DetailedFlightBase):
     identification: Identification
@@ -106,6 +124,8 @@ class AllFlightRead(BaseModel):
         nullable=False
     )) 
     db_data: List[DetailedFlight]
+    class Config:
+        orm_mode = True 
 
 #NOTE: BriefFlight INHERIT FROM REGULAR NOT SQLMODEL!
 class BriefFlightBase(BaseModel):
@@ -141,7 +161,10 @@ class Point(BaseModel):
     
     def __str__(self) -> str:
         return '({}, {})'.format(self.lat, self.lon) 
-    
+
+    class Config:
+        orm_mode = True 
+        
 class Area(BaseModel):
     sw: Point
     ne: Point
@@ -153,4 +176,5 @@ class Area(BaseModel):
     def __iter__(self):
         return (coord for coord in (self.sw.lat, self.sw.lon,
                                        self.ne.lat, self.ne.lon))
-    
+    class Config:
+        orm_mode = True 

@@ -54,27 +54,25 @@ class Data:
         r = await client.get(self.API_STRING.format(flight_id=flight_id))
 
         data = r.json()
-        
         # print(data["identification"]["number"])
         
-        #number = parse_obj_as(Number, data["identification"]["number"]) #  none is not an allowed value (type=type_error.none.not_allowed)
+        number = NumberCreate(**data["identification"]["number"])
+        # print(f"number: {number}")
+        
+        identification = Identification(
+                identification=data["identification"]["id"],
+                callsign=data["identification"]["callsign"],
+                number=number.dict()
+                )
+        print(f"identification: {identification}")
 
-        print(type(data["identification"]["number"]))
-        print(data["identification"]["number"])
-        number = Number.from_orm(data["identification"]["number"])
-        print(f"number: {number.alternative}")
-        
-        
-        # item_data = data["identification"]["number"]
-        # item = parse_obj_as(Number, item_data)
-        # print(item)
-        # print("======")
-        
-        
-        # print(f"data[aircraft]: ", json.dumps(data["aircraft"], indent=4, sort_keys=False))
+        # print(json.dumps(data["aircraft"], indent=4, sort_keys=False))
+        # print(type(data["aircraft"]["model"]))
         # print(data["aircraft"]["model"])
         # model = Model(**data["aircraft"]["model"])
         # print(model)
+        
+        
         # aircraft = Aircraft(
         #     country_id=data["aircraft"]["countryId"],
         #     registration=data["aircraft"]["registration"],
