@@ -38,10 +38,11 @@ async def async_main(data):
     )
     async with async_session() as session:
         async with session.begin():
+            print(data["detailed"])
             r1 = Response(
                 name="controller1",
                 time_created=datetime.datetime.now(),
-                flights=[DetailedFlight(identification=flight.identification) for flight in data["detailed"]]
+                flights=[DetailedFlight(identification=flight.identification.identification, airline_name=flight.airline.name, airplane_code=flight.aircraft.model.code) for flight in data["detailed"]]
             )   
             session.add(r1)
             
@@ -51,7 +52,3 @@ async def async_main(data):
     # clean-up pooled connections
     await engine.dispose()
         
-# statement = select(Response).where(Response.id==1)
-# result = await session.execute(statement)
-# response = result.one()
-# print(response)

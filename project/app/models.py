@@ -40,6 +40,8 @@ class ResponseCreate(ResponseBase):
 
 class DetailedFlightBase(SQLModel):
     identification: str = Field(default=None, primary_key=False)
+    airline_name: str = Field(default=None, primary_key=False)
+    airplane_code: str = Field(default=None, primary_key=False)
     
     response_id: Optional[int]= Field(default=None, foreign_key="response.id")
     class Config:
