@@ -32,11 +32,11 @@ class Data:
         self.detailed = []  
                     
     def get_data(self):
-        # p1_coords = {"lat" : 37.8, "lon" : 37.6} # PTOWN
-        # p2_coords = {"lat" : -121.90, "lon" : -121.78}
+        p1_coords = {"lat" : 37.8, "lon" : 37.6} # PTOWN
+        p2_coords = {"lat" : -121.90, "lon" : -121.78}
         
-        p1_coords = {"lat" : 59.06, "lon" : 50.00}
-        p2_coords = {"lat" : 30.97, "lon" : 36.46}
+        # p1_coords = {"lat" : 59.06, "lon" : 50.00}
+        # p2_coords = {"lat" : 30.97, "lon" : 36.46}
 
         p1 = Point(**p1_coords)
         p2 = Point(**p2_coords)
@@ -87,45 +87,41 @@ class Data:
         if data.get("airline") is None:
             print("AIRLINE DOESNT EXIST")
             data["airline"] = data.get("airline", "airline")
-            data["airline"] = Airline(**data["airline"])
-            print(data["airline"])
+            data["airline"] = {"name" : "no_name", "short": "no_short"}
+            # print(data["airline"])
         else:
             print("AIRLINE EXISTS")
-            print(data["airline"])
-
+            # print(data["airline"])
         
         if data["airline"].get("code") is None:
             print("CODE DOESNT EXIST")
             data["airline"].get("code", "code")
-            data["airline"]["code"] = Code(iata="none", icao="none")
-            print(data["airline"]["code"])
+            data["airline"]["code"] = {"iata" : "no_iata", "icao": "no_icao"}
+            # print(data["airline"]["code"])
         else:
             print("CODE EXISTS")
-            print(data["airline"]["code"])
+            # print(data["airline"]["code"])
               
-        # code = Code(**data["airline"]["code"])
-            
-        # print(json.dumps(data["airline"], indent=4, sort_keys=False))
-        # try:
-        #     code = Code(**data["airline"]["code"])
-        #     # print(code)
-        # except Exception as e:
-        #     code = Code()
-            # print("*"*50,"NULL", code)
+        code = Code(**data["airline"]["code"])
+        # print(code)
 
+        if  data["airline"].get("short") is None:
+            print("SHORT DOESNT EXIST")
+            data["airline"].get("short", "short")
+            data["airline"]["short"] = "short"      
         
-        # airline = Airline(
-        #     name=data["airline"]["name"],
-        #     short=data["airline"]["short"],
-        #     code=code.dict()
-        # )
-        # print(airline.short, airline.code)
+        airline = Airline(
+            name=data["airline"]["name"],
+            short=data["airline"]["short"],
+            code=code.dict()
+        )
+        print(airline.short, airline.code)
         
-        # detailed = DetailedFlightCreate(
-        #                 identification=identification.dict()
-                        # airline=airline.dict(),
-                        # aircraft=aircraft.dict()
-        # )
+        detailed = DetailedFlightCreate(
+                        identification=identification.dict(),
+                        airline=airline.dict(),
+                        aircraft=aircraft.dict()
+        )
     
         # print(f"detailed: {detailed}")
         # self.detailed.append(detailed) 

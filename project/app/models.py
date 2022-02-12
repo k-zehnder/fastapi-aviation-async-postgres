@@ -10,10 +10,6 @@ class ImpossibleSpeedError(PydanticValueError):
     code = 'impossible_speed'
     msg_template = 'a speed of {speed} is not possible.'
 
-class NotCorrectTypeError(PydanticValueError):
-    code = 'demo_custom_errors'
-    msg_template = 'invalid icao code: {icao}.'
-
         
 class ResponseBase(SQLModel):
     name: Optional[str] = Field(default=None, primary_key=False)
@@ -86,11 +82,6 @@ class Identification(BaseModel):
 class Code(BaseModel):
     iata: Optional[str] = Field(default=None, primary_key=False)
     icao: Optional[str] = Field(default=None, primary_key=False)
-
-    @validator("icao")
-    def is_valid_icao(cls, icao):
-        if type(icao) == isinstance(icao, list):
-            raise NotCorrectTypeError(icao=icao)
     
     class Config:
         orm_mode = True 
