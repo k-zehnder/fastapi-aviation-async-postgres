@@ -3,10 +3,10 @@ import logging
 from urllib.request import urlopen, Request
 
 from .coordinates import Area, Point, Waypoint
-from .models.airport import Airport
-from .models.flight import (BriefFlight, DetailedFlight,
+from .airport import Airport
+from .flight import (BriefFlight, DetailedFlight,
                                        flights_to_json)
-from .models.operator import Operator
+from .operator import Operator
 
 FLIGHTS_API_PATTERN = ('https://data-live.flightradar24.com/zones'
                        '/fcgi/feed.js?bounds={},{},{},{}'
@@ -76,4 +76,3 @@ class API:
                 for result in self.get_search_results(query, limit)
                 if result['type'] not in ('schedule', 'aircraft', 'operator'))
 
-api = API()

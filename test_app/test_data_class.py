@@ -1,7 +1,6 @@
 import pytest
 
-from app.data_class import Data
-
+from app.flightradar.data_class import Data
 
 class TestData:
     
@@ -9,6 +8,7 @@ class TestData:
         
     def test_data_init(self):
         assert self.data is not None
+        
 
     def tearDown(self) -> None:
         pass

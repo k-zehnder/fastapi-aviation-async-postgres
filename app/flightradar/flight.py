@@ -1,7 +1,7 @@
 import json
 from typing import List
 
-from ..coordinates import Waypoint
+from .coordinates import Waypoint
 
 FIELDS = ['mode_s', 'lat', 'lon', 'track', 'alt', 'speed',
           'squawk', 'radar', 'model', 'registration', 'undefined',

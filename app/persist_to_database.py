@@ -1,15 +1,19 @@
 import sqlmodel
 from sqlmodel import create_engine, SQLModel, Session, select
+import datetime
 
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.ext.asyncio import create_async_engine
 from sqlalchemy.orm import sessionmaker
 
-from app.my_models import Response
-from app.db import build_uri
+# from app.my_models import *
+from flightradar.my_models import *
 
-from app.flightradar.api import API
-from app.data_class import Data
+# from app.flightradar.api import API
+from flightradar.api import API
+
+# from app.data_class import Data
+from flightradar.data_class import Data
 
 
 async def async_main(data):

@@ -7,12 +7,10 @@ import asyncio
 from textwrap import indent 
 import httpx
 
-from app.flightradar.api import API
+from .api import API
 
-from app.my_models import *
+from .my_models import *
 
-from pydantic import parse_obj_as
-from sqlmodel import create_engine
 
 HEADERS = {'Connection': 'keep-alive',
            'User-Agent': ('Mozilla/5.0 (Windows NT 10.0; Win64; '
