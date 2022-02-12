@@ -5,12 +5,11 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.ext.asyncio import create_async_engine
 from sqlalchemy.orm import sessionmaker
 
-from models import *
-from db import build_uri
-# from . import crud
+from app.my_models import Response
+from app.db import build_uri
 
-from dataclass.flightradar.api import API
-from dataclass.data_class import Data
+from app.flightradar.api import API
+from app.data_class import Data
 
 
 async def async_main(data):
@@ -20,7 +19,7 @@ async def async_main(data):
     )
     
     async with engine.begin() as conn:
-        await conn.run_sync(SQLModel.metadata.drop_all)
+        # await conn.run_sync(SQLModel.metadata.drop_all)
         print("NOT REMOVING DB")
         await conn.run_sync(SQLModel.metadata.create_all)
 
