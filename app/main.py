@@ -7,12 +7,9 @@ from sqlalchemy.orm import sessionmaker
 from sqlmodel import create_engine, SQLModel, Session, Field, select
 
 from flightradar.my_models import *
-# from my_models import *
 
-# from app.persist_to_database import async_main, get_data
 from persist_to_database import async_main, get_data
 
-# from app.data_class import Data
 from flightradar.data_class import Data
 
 
