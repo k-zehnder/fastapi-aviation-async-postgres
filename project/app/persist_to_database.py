@@ -43,4 +43,28 @@ async def async_main(data):
     # for AsyncEngine created in function scope, close and
     # clean-up pooled connections
     await engine.dispose()
+    
+async def get_data():
+    engine = create_async_engine(
+        "postgresql+asyncpg://postgres:password@localhost/foo",
+        echo=False,
+    )
+    # expire_on_commit=False will prevent attributes from being expired
+    # after commit.
+    async_session = sessionmaker(
+        engine, expire_on_commit=True, class_=AsyncSession
+    )
+    async with async_session() as session:
+        async with session.begin():
+            statement = select(Response).where(Response.name=="controller1")
+            result = await session.execute(statement)
+            c1_response = result.scalars().first()
+            print(c1_response)
+            # print(dir(c1_response))
+            print(c1_response.time_created)
+    
+    # for AsyncEngine created in function scope, close and
+    # clean-up pooled connections
+    await engine.dispose()
+    
         

@@ -6,6 +6,7 @@ from typing import List, Optional, Any, Type
 from pydantic import BaseModel, PydanticValueError, ValidationError, validator
 import datetime
 
+
 class ImpossibleSpeedError(PydanticValueError):
     code = 'impossible_speed'
     msg_template = 'a speed of {speed} is not possible.'
