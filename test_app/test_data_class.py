@@ -8,7 +8,6 @@ class TestData:
         
     def test_data_init(self):
         assert self.data is not None
-        
-
+    
     def tearDown(self) -> None:
         pass
