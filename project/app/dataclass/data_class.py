@@ -51,14 +51,9 @@ class Data:
         return [flight.id for flight in briefs]
     
     async def make_request_async(self, flight_id, client):
-        counts = 0
         r = await client.get(self.API_STRING.format(flight_id=flight_id))
 
         data = r.json()
-        
-        # if counts < 1:
-        #     print(json.dumps(data, indent=4, sort_keys=False))
-        # counts += 1
         
         number = NumberCreate(**data["identification"]["number"])
         print(f"number: {number}")
@@ -69,9 +64,11 @@ class Data:
                 number=number.dict()
                 )
         print(f"identification: {identification}")
+        # builder.build_identification(data)
             
         model = Model(**data["aircraft"]["model"])
         print(f"model: {model}")
+        # builder.build_model()
         
         aircraft = Aircraft(
             country_id=data["aircraft"]["countryId"],
@@ -83,7 +80,9 @@ class Data:
         print(f"aircraft: {aircraft}")
         print()
         print()
+        # builder.build_aircraft()
         
+        # builder.handle_airline(data)
         if data.get("airline") is None:
             print("AIRLINE DOESNT EXIST")
             data["airline"] = data.get("airline", "airline")
@@ -92,7 +91,8 @@ class Data:
         else:
             print("AIRLINE EXISTS")
             # print(data["airline"])
-        
+
+        # builder.handle_code(data)
         if data["airline"].get("code") is None:
             print("CODE DOESNT EXIST")
             data["airline"].get("code", "code")
@@ -104,17 +104,19 @@ class Data:
               
         code = Code(**data["airline"]["code"])
         # print(code)
+        # builder.build_code(data)
 
         if  data["airline"].get("short") is None:
             print("SHORT DOESNT EXIST")
             data["airline"].get("short", "short")
             data["airline"]["short"] = "no_short"      
-        
+
         airline = Airline(
             name=data["airline"]["name"],
             short=data["airline"]["short"],
             code=code.dict()
         )
+        # builder.build_airline(data)        
         # print(airline.short, airline.code, airline.code)
         
         detailed = DetailedFlightCreate(
@@ -122,6 +124,7 @@ class Data:
                         airline=airline.dict(),
                         aircraft=aircraft.dict()
         )
+        # builder.build_detailed(identification, airline, aircraft)        
     
         print(f"detailed: {detailed}")
         self.detailed.append(detailed) 

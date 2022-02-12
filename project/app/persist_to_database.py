@@ -1,10 +1,5 @@
-import os
-import json
-from typing import Dict, List
-
 import sqlmodel
 from sqlmodel import create_engine, SQLModel, Session, select
-import asyncio
 
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.ext.asyncio import create_async_engine
@@ -17,9 +12,6 @@ from db import build_uri
 from dataclass.flightradar.api import API
 from dataclass.data_class import Data
 
-from hero_models import Team, TeamCreate
-
-# STRING = os.environ.get("POSTGRES_ASYNC_AVIATION")
 
 async def async_main(data):
     engine = create_async_engine(
@@ -38,11 +30,11 @@ async def async_main(data):
     )
     async with async_session() as session:
         async with session.begin():
-            print(data["detailed"])
+            # print(data["detailed"])
             r1 = Response(
-                name="controller1",
-                time_created=datetime.datetime.now(),
-                flights=[DetailedFlight(identification=flight.identification.identification, airline_name=flight.airline.name, airplane_code=flight.aircraft.model.code) for flight in data["detailed"]]
+                    name="controller1",
+                    time_created=datetime.datetime.now(),
+                    flights=[DetailedFlight(identification=flight.identification.identification, airline_name=flight.airline.name, airplane_code=flight.aircraft.model.code) for flight in data["detailed"]]
             )   
             session.add(r1)
             
