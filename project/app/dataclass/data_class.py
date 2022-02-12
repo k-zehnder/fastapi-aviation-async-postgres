@@ -35,7 +35,7 @@ class Data:
         p1_coords = {"lat" : 37.8, "lon" : 37.6} # PTOWN
         p2_coords = {"lat" : -121.90, "lon" : -121.78}
         
-        # p1_coords = {"lat" : 59.06, "lon" : 50.00}
+        # p1_coords = {"lat" : 59.06, "lon" : 50.00} # RUSSIA?
         # p2_coords = {"lat" : 30.97, "lon" : 36.46}
 
         p1 = Point(**p1_coords)

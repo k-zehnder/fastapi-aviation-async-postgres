@@ -1,5 +1,5 @@
+import os
 import json
-from os import remove
 from typing import Dict, List
 
 import sqlmodel
@@ -19,7 +19,7 @@ from dataclass.data_class import Data
 
 from hero_models import Team, TeamCreate
 
-
+# STRING = os.environ.get("POSTGRES_ASYNC_AVIATION")
 
 async def async_main(data):
     engine = create_async_engine(
@@ -37,25 +37,18 @@ async def async_main(data):
         engine, expire_on_commit=True, class_=AsyncSession
     )
     async with async_session() as session:
-        r1 = Response(
-            name="controller1",
-            time_created=datetime.datetime.now()
-        )   
-
-        for flight in data["detailed"]:
-            f = DetailedFlight(
-                identification=flight.identification,
-                response_id=r1.id
-            )
-            print(f)
-            print("----")
-            session.add(f)
+        async with session.begin():
+            r1 = Response(
+                name="controller1",
+                time_created=datetime.datetime.now(),
+                flights=[DetailedFlight(identification=flight.identification) for flight in data["detailed"]]
+            )   
+            session.add(r1)
             
         await session.commit()
-        await session.refresh(f)
-            
-        # for AsyncEngine created in function scope, close and
-        # clean-up pooled connections
+                
+    # for AsyncEngine created in function scope, close and
+    # clean-up pooled connections
     await engine.dispose()
         
 # statement = select(Response).where(Response.id==1)
