@@ -21,6 +21,7 @@ async def async_main(data):
     
     async with engine.begin() as conn:
         await conn.run_sync(SQLModel.metadata.drop_all)
+        print("NOT REMOVING DB")
         await conn.run_sync(SQLModel.metadata.create_all)
 
     # expire_on_commit=False will prevent attributes from being expired

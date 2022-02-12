@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+
 import asyncio
 
 from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
@@ -18,7 +20,6 @@ if __name__ == "__main__":
     # LIVE DATA
     data = Data()
     data = data.run()
-    print("\n=============")
     # print(f"data {data}")
     print(f'# detailed returned: {len(data["detailed"])}')
     
