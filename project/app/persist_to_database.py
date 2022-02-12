@@ -26,7 +26,7 @@ async def async_main(data):
         "postgresql+asyncpg://postgres:password@localhost/foo",
         echo=False,
     )
-
+    
     async with engine.begin() as conn:
         await conn.run_sync(SQLModel.metadata.drop_all)
         await conn.run_sync(SQLModel.metadata.create_all)
@@ -36,39 +36,29 @@ async def async_main(data):
     async_session = sessionmaker(
         engine, expire_on_commit=True, class_=AsyncSession
     )
-    
-    counts = 0
-
     async with async_session() as session:
-        async with session.begin():
-            """
-            This is where you add data.
-            """
-            inp = {
-                "name": "controller1",
-                "time_created": datetime.datetime.now()
-            }
-            r1 = Response(
-                name="controller1",
-                time_created=datetime.datetime.now()
+        r1 = Response(
+            name="controller1",
+            time_created=datetime.datetime.now()
+        )   
+
+        for flight in data["detailed"]:
+            f = DetailedFlight(
+                identification=flight.identification,
+                response_id=r1.id
             )
-            # r1.flights = data["detailed"]
+            print(f)
+            print("----")
+            session.add(f)
             
-            print(data.keys()) # time, detailed
-            print(data["detailed"])
+        await session.commit()
+        await session.refresh(f)
             
-            counts += 1
-            
-            if counts > 1:
-                pass
-            
-            session.add(r1)
-            await session.commit()
-        # NOTE: this must go outside inner session.begin() block
-        await session.refresh(r1)
-            
-    # for AsyncEngine created in function scope, close and
-    # clean-up pooled connections
+        # for AsyncEngine created in function scope, close and
+        # clean-up pooled connections
     await engine.dispose()
-    
-    
+        
+# statement = select(Response).where(Response.id==1)
+# result = await session.execute(statement)
+# response = result.one()
+# print(response)

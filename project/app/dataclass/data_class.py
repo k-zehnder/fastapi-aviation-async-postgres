@@ -108,14 +108,14 @@ class Data:
         if  data["airline"].get("short") is None:
             print("SHORT DOESNT EXIST")
             data["airline"].get("short", "short")
-            data["airline"]["short"] = "short"      
+            data["airline"]["short"] = "no_short"      
         
         airline = Airline(
             name=data["airline"]["name"],
             short=data["airline"]["short"],
             code=code.dict()
         )
-        print(airline.short, airline.code)
+        # print(airline.short, airline.code, airline.code)
         
         detailed = DetailedFlightCreate(
                         identification=identification.dict(),
@@ -123,8 +123,8 @@ class Data:
                         aircraft=aircraft.dict()
         )
     
-        # print(f"detailed: {detailed}")
-        # self.detailed.append(detailed) 
+        print(f"detailed: {detailed}")
+        self.detailed.append(detailed) 
 
 
     async def async_main(self):

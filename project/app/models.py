@@ -47,7 +47,7 @@ class DetailedFlightBase(SQLModel):
     
 class DetailedFlight(DetailedFlightBase, table=True):
     id: int = Field(default=None, primary_key=True)
-    
+   
     response: Optional[Response] = Relationship(back_populates="flights") # allows many-to-one side
     
     class Config:

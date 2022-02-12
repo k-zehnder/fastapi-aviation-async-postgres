@@ -15,7 +15,7 @@ if __name__ == "__main__":
     data = Data()
     data = data.run()
     print("\n=============")
-    print(f"data {data}")
+    # print(f"data {data}")
     print(f'# detailed returned: {len(data["detailed"])}')
     
     asyncio.run(async_main(data))
