@@ -2,10 +2,6 @@
 
 import asyncio
 
-from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
-from sqlalchemy.orm import sessionmaker
-from sqlmodel import create_engine, SQLModel, Session, Field, select
-
 from flightradar.my_models import *
 
 from persist_to_database import async_main, get_data
@@ -27,4 +23,4 @@ if __name__ == "__main__":
     
     # retrieve data
     asyncio.run(get_data())
-        
+

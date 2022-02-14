@@ -6,6 +6,8 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.ext.asyncio import create_async_engine
 from sqlalchemy.orm import sessionmaker
 
+from sqlmodel import Field, Relationship, Session, SQLModel, create_engine, select
+
 from flightradar.my_models import *
 
 from flightradar.api import API
@@ -61,18 +63,11 @@ async def get_data():
             result = await session.execute(statement)
             c1_response = result.scalars().first()
             print(c1_response)
-            # print(dir(c1_response))
             print(c1_response.time_created)
     
     # for AsyncEngine created in function scope, close and
     # clean-up pooled connections
     await engine.dispose()
-    
-        
-async def init_db():
-    async with engine.begin() as conn:
-        await conn.run_sync(SQLModel.metadata.drop_all)
-        await conn.run_sync(SQLModel.metadata.create_all)
 
 async def get_session_async() -> AsyncSession:
     engine = create_async_engine(

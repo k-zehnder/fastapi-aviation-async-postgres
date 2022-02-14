@@ -1,7 +1,8 @@
 from codecs import Codec
 from time import strftime
 from tokenize import String
-from sqlmodel import SQLModel, Field, Relationship, Column, DateTime
+from sqlmodel import Field, Relationship, Session, Column, DateTime, SQLModel, create_engine, select
+
 from typing import List, Optional, Any, Type
 from pydantic import BaseModel, PydanticValueError, ValidationError, validator
 import datetime
@@ -30,14 +31,6 @@ class Response(ResponseBase, table=True):
     class Config:
         orm_mode = True
         
-class ResponseRead(ResponseBase):
-    id: int
-  
-# class ResponseRead(ResponseBase):
-#     db_data: List[DetailedFlight]
-    
-class ResponseCreate(ResponseBase):
-    pass
 
 class DetailedFlightBase(SQLModel):
     identification: str = Field(default=None, primary_key=False)
@@ -56,6 +49,14 @@ class DetailedFlight(DetailedFlightBase, table=True):
     class Config:
         orm_mode = True
 
+class ResponseRead(ResponseBase):
+    id: int
+
+class ResponseReadWithFlights(ResponseRead):
+    flights: List[DetailedFlight] = []
+
+class ResponseCreate(ResponseBase):
+    pass
 
 class NumberBase(SQLModel):
     default: Optional[str] = Field(default=None, primary_key=False)

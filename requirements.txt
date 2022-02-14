@@ -23,5 +23,4 @@ asyncio
 pydantic
 python-dotenv
 databases
-sqlmodel
 pydantic[email]

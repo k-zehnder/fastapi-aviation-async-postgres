@@ -11,6 +11,8 @@ from .api import API
 
 from .my_models import *
 
+from .parser import Parser
+
 
 HEADERS = {'Connection': 'keep-alive',
            'User-Agent': ('Mozilla/5.0 (Windows NT 10.0; Win64; '
@@ -27,6 +29,7 @@ class Data:
     def __init__(self) -> None:
         self.API_STRING = API_STRING
         self.api = API()
+        self.parser = Parser()
         self.detailed = []  
                     
     def get_data(self):
@@ -53,78 +56,24 @@ class Data:
 
         data = r.json()
         
-        number = NumberCreate(**data["identification"]["number"])
+        number = self.parser.build_number(data)
         print(f"number: {number}")
         
-        identification = Identification(
-                identification=data["identification"]["id"],
-                callsign=data["identification"]["callsign"],
-                number=number.dict()
-                )
+        identification = self.parser.build_identification(data, number)
         print(f"identification: {identification}")
-        # builder.build_identification(data)
             
-        model = Model(**data["aircraft"]["model"])
+        model = self.parser.build_model(data)
         print(f"model: {model}")
-        # builder.build_model()
         
-        aircraft = Aircraft(
-            country_id=data["aircraft"]["countryId"],
-            registration=data["aircraft"]["registration"],
-            hex=data["aircraft"]["hex"],
-            age=data["aircraft"]["msn"],
-            model=model.dict()
-        )   
+        aircraft = self.parser.build_aircraft(data, model) 
         print(f"aircraft: {aircraft}")
-        print()
-        print()
-        # builder.build_aircraft()
-        
-        # builder.handle_airline(data)
-        if data.get("airline") is None:
-            print("AIRLINE DOESNT EXIST")
-            data["airline"] = data.get("airline", "airline")
-            data["airline"] = {"name" : "no_name", "short": "no_short"}
-            # print(data["airline"])
-        else:
-            print("AIRLINE EXISTS")
-            # print(data["airline"])
 
-        # builder.handle_code(data)
-        if data["airline"].get("code") is None:
-            print("CODE DOESNT EXIST")
-            data["airline"].get("code", "code")
-            data["airline"]["code"] = {"iata" : "no_iata", "icao": "no_icao"}
-            # print(data["airline"]["code"])
-        else:
-            print("CODE EXISTS")
-            # print(data["airline"]["code"])
-              
-        code = Code(**data["airline"]["code"])
-        # print(code)
-        # builder.build_code(data)
+        airline = self.parser.build_airline(data)        
 
-        if  data["airline"].get("short") is None:
-            print("SHORT DOESNT EXIST")
-            data["airline"].get("short", "short")
-            data["airline"]["short"] = "no_short"      
-
-        airline = Airline(
-            name=data["airline"]["name"],
-            short=data["airline"]["short"],
-            code=code.dict()
-        )
-        # builder.build_airline(data)        
-        # print(airline.short, airline.code, airline.code)
-        
-        detailed = DetailedFlightCreate(
-                        identification=identification.dict(),
-                        airline=airline.dict(),
-                        aircraft=aircraft.dict()
-        )
-        # builder.build_detailed(identification, airline, aircraft)        
+        detailed = self.parser.build_detailed(identification, airline, aircraft)     
     
         print(f"detailed: {detailed}")
+        
         self.detailed.append(detailed) 
 
 
