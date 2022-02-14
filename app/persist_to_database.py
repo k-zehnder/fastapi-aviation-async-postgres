@@ -1,5 +1,3 @@
-import sqlmodel
-from sqlmodel import create_engine, SQLModel, Session, select
 import datetime
 
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -26,8 +24,6 @@ async def async_main(data):
         print("NOT REMOVING DB")
         await conn.run_sync(SQLModel.metadata.create_all)
 
-    # expire_on_commit=False will prevent attributes from being expired
-    # after commit.
     async_session = sessionmaker(
         engine, expire_on_commit=True, class_=AsyncSession
     )
@@ -40,11 +36,7 @@ async def async_main(data):
                     flights=[DetailedFlight(identification=flight.identification.identification, airline_name=flight.airline.name, airplane_code=flight.aircraft.model.code) for flight in data["detailed"]]
             )   
             session.add(r1)
-            
-        await session.commit()
-                
-    # for AsyncEngine created in function scope, close and
-    # clean-up pooled connections
+        await session.commit()                
     await engine.dispose()
     
 async def get_data():
@@ -52,21 +44,18 @@ async def get_data():
         "postgresql+asyncpg://postgres:password@localhost/foo",
         echo=False,
     )
-    # expire_on_commit=False will prevent attributes from being expired
-    # after commit.
+
     async_session = sessionmaker(
         engine, expire_on_commit=True, class_=AsyncSession
     )
+
     async with async_session() as session:
         async with session.begin():
             statement = select(Response).where(Response.name=="controller1")
             result = await session.execute(statement)
             c1_response = result.scalars().first()
             print(c1_response)
-            print(c1_response.time_created)
-    
-    # for AsyncEngine created in function scope, close and
-    # clean-up pooled connections
+            print(c1_response.time_created)    
     await engine.dispose()
 
 async def get_session_async() -> AsyncSession:

@@ -2,6 +2,7 @@ from .api import API
 
 from .my_models import *
 
+
 class Parser:
     
     def build_number(self, data):
@@ -32,10 +33,12 @@ class Parser:
     def build_airline(self, data):
         data = self._handle_missing_airline(data)
         code = self.build_code(data)
+       
         if  data["airline"].get("short") is None:
-            print("SHORT DOESNT EXIST")
+            # print("SHORT DOESNT EXIST")
             data["airline"].get("short", "short")
             data["airline"]["short"] = "no_short"      
+        
         return Airline(
             name=data["airline"]["name"],
             short=data["airline"]["short"],
@@ -51,14 +54,14 @@ class Parser:
         
     def _handle_missing_airline(self, data):
         if data.get("airline") is None:
-            print("AIRLINE DOESNT EXIST")
+            # print("AIRLINE DOESNT EXIST")
             data["airline"] = data.get("airline", "airline")
             data["airline"] = {"name" : "no_name", "short": "no_short"}
         # else:
         #     print("AIRLINE EXISTS")
 
         if data["airline"].get("code") is None:
-            print("CODE DOESNT EXIST")
+            # print("CODE DOESNT EXIST")
             data["airline"].get("code", "code")
             data["airline"]["code"] = {"iata" : "no_iata", "icao": "no_icao"}
         # else:
