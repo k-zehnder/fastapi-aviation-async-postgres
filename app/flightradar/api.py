@@ -6,7 +6,6 @@ from .coordinates import Area, Point, Waypoint
 from .airport import Airport
 from .flight import (BriefFlight, DetailedFlight,
                                        flights_to_json)
-from .operator import Operator
 
 FLIGHTS_API_PATTERN = ('https://data-live.flightradar24.com/zones'
                        '/fcgi/feed.js?bounds={},{},{},{}'
