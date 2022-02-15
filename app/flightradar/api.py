@@ -2,11 +2,9 @@ import json
 import logging
 from urllib.request import urlopen, Request
 
-from .coordinates import Area, Point, Waypoint
 from .airport import Airport
-from .flight import (BriefFlight, DetailedFlight,
-                                       flights_to_json)
-from .operator import Operator
+from .flight import (BriefFlight, DetailedFlight, flights_to_json) # from FR
+from .my_models import Point, Area
 
 FLIGHTS_API_PATTERN = ('https://data-live.flightradar24.com/zones'
                        '/fcgi/feed.js?bounds={},{},{},{}'
@@ -22,8 +20,7 @@ HEADERS = {'Connection': 'keep-alive',
                           'like Gecko) Chrome')}
 
 SEARCH_TYPES = {'airport': Airport,
-                'live': BriefFlight,
-                'operator': Operator}
+                'live': BriefFlight}
 
 
 class API:

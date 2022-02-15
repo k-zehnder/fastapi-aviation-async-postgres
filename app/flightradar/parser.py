@@ -35,7 +35,6 @@ class Parser:
         code = self.build_code(data)
        
         if  data["airline"].get("short") is None:
-            # print("SHORT DOESNT EXIST")
             data["airline"].get("short", "short")
             data["airline"]["short"] = "no_short"      
         
@@ -54,17 +53,11 @@ class Parser:
         
     def _handle_missing_airline(self, data):
         if data.get("airline") is None:
-            # print("AIRLINE DOESNT EXIST")
             data["airline"] = data.get("airline", "airline")
             data["airline"] = {"name" : "no_name", "short": "no_short"}
-        # else:
-        #     print("AIRLINE EXISTS")
 
         if data["airline"].get("code") is None:
-            # print("CODE DOESNT EXIST")
             data["airline"].get("code", "code")
             data["airline"]["code"] = {"iata" : "no_iata", "icao": "no_icao"}
-        # else:
-        #     print("CODE EXISTS")
         
         return data

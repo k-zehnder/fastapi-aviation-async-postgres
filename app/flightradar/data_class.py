@@ -53,7 +53,6 @@ class Data:
     
     async def make_request_async(self, flight_id, client):
         r = await client.get(self.API_STRING.format(flight_id=flight_id))
-        
         data = r.json()
         
         number = self.parser.build_number(data)
@@ -62,7 +61,6 @@ class Data:
         aircraft = self.parser.build_aircraft(data, model) 
         airline = self.parser.build_airline(data)        
         detailed = self.parser.build_detailed(identification, airline, aircraft)                 
-        
         self.detailed.append(detailed) 
 
 
