@@ -21,8 +21,7 @@ HEADERS = {'Connection': 'keep-alive',
                           'like Gecko) Chrome')}
 
 SEARCH_TYPES = {'airport': Airport,
-                'live': BriefFlight,
-                'operator': Operator}
+                'live': BriefFlight}
 
 
 class API:
@@ -73,5 +72,5 @@ class API:
             res_label=result.get('label'),
             **result), result['type'])
                 for result in self.get_search_results(query, limit)
-                if result['type'] not in ('schedule', 'aircraft', 'operator'))
+                if result['type'] not in ('schedule', 'aircraft'))
 
