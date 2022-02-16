@@ -8,7 +8,7 @@ import asyncio
 from textwrap import indent 
 import httpx
 
-from .my_models import *
+from .models import *
 
 from .parser import Parser
 
@@ -50,7 +50,6 @@ class Data:
         mapp = {"sw" : p1, "ne" : p2}
         area = Area(**mapp)
         
-        # briefs = self.get_area(*)
         return self.get_ids(self.get_area(area))
 
     def get_ids(self, briefs):

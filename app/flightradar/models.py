@@ -162,13 +162,8 @@ class Area(BaseModel):
     class Config:
         orm_mode = True 
         
-
-FIELDS = ['mode_s', 'lat', 'lon', 'track', 'alt', 'speed',
-          'squawk', 'radar', 'model', 'registration', 'undefined',
-          'origin', 'destination', 'iata', 'undefined2',
-          'vertical_speed', 'icao', 'undefined3', 'airline']
-
 class BriefFlightBase(BaseModel):
+    
     flight_id: Optional[str] = Field(default=None, primary_key=False)
     mode_s: Optional[str] = Field(default=None, primary_key=False)
     lat: Optional[float] = Field(default=None, primary_key=False)
@@ -193,7 +188,11 @@ class BriefFlightBase(BaseModel):
     @staticmethod
     def create(flight_id: str, data: list):
         """Static method for Flight instance creation."""
-        return BriefFlight(flight_id=flight_id, **dict(zip(FIELDS, data)))
+        fields = ['mode_s', 'lat', 'lon', 'track', 'alt', 'speed',
+                'squawk', 'radar', 'model', 'registration', 'undefined',
+                'origin', 'destination', 'iata', 'undefined2',
+                'vertical_speed', 'icao', 'undefined3', 'airline']
+        return BriefFlight(flight_id=flight_id, **dict(zip(fields, data)))
 
     class Config:
         orm_mode = True 

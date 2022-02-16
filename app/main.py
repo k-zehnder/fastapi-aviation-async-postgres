@@ -2,7 +2,7 @@
 
 import asyncio
 
-from flightradar.my_models import *
+from flightradar.models import *
 
 from persist_to_database import async_main, get_data
 

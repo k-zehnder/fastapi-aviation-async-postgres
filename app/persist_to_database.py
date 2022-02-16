@@ -6,7 +6,7 @@ from sqlalchemy.orm import sessionmaker
 
 from sqlmodel import Field, Relationship, Session, SQLModel, create_engine, select
 
-from flightradar.my_models import *
+from flightradar.models import *
 
 from flightradar.data_class import Data
 
