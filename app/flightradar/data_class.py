@@ -1,4 +1,5 @@
 from logging import exception
+from urllib.request import urlopen, Request
 import os
 import datetime
 from distutils.command.build import build
@@ -13,6 +14,12 @@ from .my_models import *
 
 from .parser import Parser
 
+from .flight import flights_to_json
+
+FLIGHTS_API_PATTERN = ('https://data-live.flightradar24.com/zones'
+                       '/fcgi/feed.js?bounds={},{},{},{}'
+                       '&faa=1&mlat=1&flarm=1&adsb=1&gnd=1&air=1'
+                       '&estimated=1&maxage=14400&gliders=1&stats=1')
 
 HEADERS = {'Connection': 'keep-alive',
            'User-Agent': ('Mozilla/5.0 (Windows NT 10.0; Win64; '
@@ -21,7 +28,18 @@ HEADERS = {'Connection': 'keep-alive',
 
 API_STRING = ("https://data-live.flightradar24.com/clickhandler/?flight={flight_id}")
 
+def flights_to_json(flights: List[BriefFlight]):
+    data = {}
+    for flight in flights:
+        data[flight.id] = {'id': flight.id, 'lat': flight.lat,
+                           'lon': flight.lon,
+                           'track': flight.track, 'speed': flight.speed,
+                           'pic': get_image_id(flight.track)}
+    return json.dumps(data)
 
+
+def get_image_id(track: int) -> int:
+    return 0
 class Data:
     """
     Class for getting FlightRadar24 API data.
@@ -31,25 +49,38 @@ class Data:
         self.api = API()
         self.parser = Parser()
         self.detailed = []  
-                    
-    def get_data(self):
-        # p1_coords = {"lat" : 37.8, "lon" : 37.6} # PTOWN
+        
+        # RUSSIA?
+        self.p1_coords = {"lat" : 59.06, "lon" : 50.00} 
+        self.p2_coords = {"lat" : 30.97, "lon" : 36.46}
+        
+        # PTOWN
+        # p1_coords = {"lat" : 37.8, "lon" : 37.6} 
         # p2_coords = {"lat" : -121.90, "lon" : -121.78}
         
-        p1_coords = {"lat" : 59.06, "lon" : 50.00} # RUSSIA?
-        p2_coords = {"lat" : 30.97, "lon" : 36.46}
+    def get_area(self, area: Area):
+        """Returns all available flights within the specified area."""
+        req = Request(FLIGHTS_API_PATTERN.format(*area),
+                      headers=HEADERS)
+        return self.parse_flights(
+            json.loads(urlopen(req).read().decode()))
 
-        p1 = Point(**p1_coords)
-        p2 = Point(**p2_coords)
+    def parse_flights(self, data: dict):
+        """Finds all flights in the response and builds their instances."""
+        return [BriefFlightBase.create(key, data[key])
+                  for key in data if isinstance(data[key], list)]
+          
+    def get_data(self):
+        p1 = Point(**self.p1_coords)
+        p2 = Point(**self.p2_coords)
 
         mapp = {"sw" : p1, "ne" : p2}
         area = Area(**mapp)
         
-        return self.parse_data(json.loads(self.api.get_area(area)))
-            
-    def parse_data(self, data):
-        briefs = [BriefFlightCreate(**data[item]) for item in data]
-        return [flight.id for flight in briefs]
+        return self.get_ids(self.get_area(area))
+
+    def get_ids(self, briefs):
+            return [flight.flight_id for flight in briefs]            
     
     async def make_request_async(self, flight_id, client):
         r = await client.get(self.API_STRING.format(flight_id=flight_id))
