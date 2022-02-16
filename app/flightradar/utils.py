@@ -1,4 +1,4 @@
-import json
+
 
 
 FLIGHTS_API_PATTERN = ('https://data-live.flightradar24.com/zones'
