@@ -12,16 +12,16 @@ from flightradar.data_class import Data
 if __name__ == "__main__":
     print()
 
-    # LIVE DATA
+    # LIVE DATA FROM FLIGHT RADAR
     data = Data()
     data = data.run()
     # print(f"data {data}")
     print(f'# brief returned: {len(data["briefs"])}')
     print(f'# detailed returned: {len(data["detailed"])}')
 
-    # get data
+    # PERSIST DATA TO POSTGRES
     asyncio.run(async_main(data))
     
-    # retrieve data
+    # ACCESS DB AND SHOW FIRST RESPONSE
     asyncio.run(get_data())
 
