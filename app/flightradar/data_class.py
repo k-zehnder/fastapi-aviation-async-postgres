@@ -18,14 +18,14 @@ class Data:
         self.parser = Parser()
         self.briefs = []
         self.detailed = []  
-        
-        # RUSSIA?
-        self.p1_coords = {"lat" : 59.06, "lon" : 50.00} 
-        self.p2_coords = {"lat" : 30.97, "lon" : 36.46}
+        self.point1 = Point({"lat" : 59.06, "lon" : 50.00}) # RUSSIA?
+        self.point2 = Point({"lat" : 30.97, "lon" : 36.46})
+        self.mapp = Area({"sw" : self.point1, "ne" : self.point2})
         
         # PTOWN
-        # self.p1_coords = {"lat" : 37.8, "lon" : 37.6} 
-        # self.p2_coords = {"lat" : -121.90, "lon" : -121.78}
+        # {"lat" : 37.8, "lon" : 37.6} 
+        # {"lat" : -121.90, "lon" : -121.78}
+        
         
     def get_area(self, area: Area) -> List[BriefFlightCreate]:
         """Returns all available flights within the specified area."""
@@ -43,14 +43,8 @@ class Data:
         return briefs
           
     def get_data(self):
-        p1 = Point(**self.p1_coords)
-        p2 = Point(**self.p2_coords)
-
-        mapp = {"sw" : p1, "ne" : p2}
-        area = Area(**mapp)
-        
-        # self.get_area(area) returns List[BriefFlightCreate]
-        return self.get_ids(self.get_area(area)) 
+        # NOTE: self.get_area(area) returns List[BriefFlightCreate]
+        return self.get_ids(self.get_area(self.mapp)) 
 
     def get_ids(self, briefs):
             return [flight.flight_id for flight in briefs]            
