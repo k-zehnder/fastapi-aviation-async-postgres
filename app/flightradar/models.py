@@ -27,7 +27,8 @@ class Response(ResponseBase, table=True):
     id: Optional[int] = Field(default=None, primary_key=True)
     
     flights: List["DetailedFlight"] = Relationship(back_populates="response")
-    
+    briefs: List["BriefFlight"] = Relationship(back_populates="response")
+
     class Config:
         orm_mode = True
         
@@ -162,7 +163,7 @@ class Area(BaseModel):
     class Config:
         orm_mode = True 
         
-class BriefFlightBase(BaseModel):
+class BriefFlightBase(SQLModel):
     
     flight_id: Optional[str] = Field(default=None, primary_key=False)
     mode_s: Optional[str] = Field(default=None, primary_key=False)
@@ -184,6 +185,8 @@ class BriefFlightBase(BaseModel):
     icao: Optional[str] = Field(default=None, primary_key=False)
     undefined3: Optional[str] = Field(default=None, primary_key=False)
     airline: Optional[str] = Field(default=None, primary_key=False)
+    
+    response_id: Optional[int]= Field(default=None, foreign_key="response.id")
 
     @staticmethod
     def create(flight_id: str, data: list):
@@ -197,8 +200,10 @@ class BriefFlightBase(BaseModel):
     class Config:
         orm_mode = True 
 
-class BriefFlight(BriefFlightBase):
-    pass
+class BriefFlight(BriefFlightBase, table=True):
+    id: int = Field(default=None, primary_key=True)
+    
+    response: Optional[Response] = Relationship(back_populates="briefs") # allows many-to-one side
 
     class Config:
         orm_mode = True 
