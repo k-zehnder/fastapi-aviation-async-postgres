@@ -91,17 +91,17 @@ class Code(BaseModel):
         orm_mode = True 
         
 class Airline(BaseModel):
-    name: Optional[str] = "name"
-    short: Optional[str] = "short"
-    url: Optional[str] = "url"
-    code: Optional[Code] = "code"
+    name: Optional[str] = Field(default="name", primary_key=False)
+    short: Optional[str] =  Field(default="short", primary_key=False)
+    url: Optional[str] = Field(default="url", primary_key=False)
+    code: Optional[Code] = Field(default=Code(), primary_key=False)
     
     class Config:
         orm_mode = True 
 
 class Model(BaseModel):
-    code: Optional[str] = "code"
-    text: Optional[str] = "text"
+    code: Optional[str] = Field(default="code", primary_key=False)
+    text: Optional[str] = Field(default="text", primary_key=False)
     
     class Config:
         orm_mode = True 
@@ -113,7 +113,7 @@ class Aircraft(BaseModel):
     age: Optional[int] = Field(default=None, primary_key=False)
     msn: Optional[str] = Field(default=None, primary_key=False)
     images: Optional[List[str]] = Field(default=None, primary_key=False)
-    model: Optional[Model]
+    model: Optional[Model] = Field(default=Model(), primary_key=False)
     
     class Config:
         orm_mode = True 
