@@ -1,6 +1,4 @@
-from logging import exception
 from urllib.request import urlopen, Request
-import os
 import datetime
 from distutils.command.build import build
 import json
@@ -14,6 +12,7 @@ from .parser import Parser
 
 from .utils import FLIGHTS_API_PATTERN, HEADERS, API_STRING
 
+
 class Data:
     """
     Class for getting FlightRadar24 API data.
@@ -21,6 +20,7 @@ class Data:
     def __init__(self) -> None:
         self.API_STRING = API_STRING
         self.parser = Parser()
+        self.briefs = []
         self.detailed = []  
         
         # RUSSIA?
@@ -40,8 +40,11 @@ class Data:
 
     def parse_flights(self, data: dict):
         """Finds all flights in the response and builds their instances."""
-        return [BriefFlightCreate.create(key, data[key])
+        briefs = [BriefFlightCreate.create(key, data[key])
                   for key in data if isinstance(data[key], list)]
+        for b in briefs:
+            self.briefs.append(b)
+        return briefs
           
     def get_data(self):
         p1 = Point(**self.p1_coords)
@@ -50,7 +53,7 @@ class Data:
         mapp = {"sw" : p1, "ne" : p2}
         area = Area(**mapp)
         
-        return self.get_ids(self.get_area(area))
+        return self.get_ids(self.get_area(area)) # self.get_area(area) returns List[BriefFlightCreate]
 
     def get_ids(self, briefs):
             return [flight.flight_id for flight in briefs]            
@@ -76,7 +79,8 @@ class Data:
             )
         return {
             "time" : datetime.datetime.utcnow(),
-            "detailed" : self.detailed
+            "detailed" : self.detailed,
+            "briefs" : self.briefs
         }
 
     def run(self):
