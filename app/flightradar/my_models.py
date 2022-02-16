@@ -102,6 +102,7 @@ class Airline(BaseModel):
 class Model(BaseModel):
     code: Optional[str] = Field(default=None, primary_key=False)
     text: Optional[str] = Field(default=None, primary_key=False)
+    
     class Config:
         orm_mode = True 
 
@@ -133,8 +134,10 @@ class AllFlightRead(BaseModel):
         nullable=False
     )) 
     db_data: List[DetailedFlight]
+    
     class Config:
         orm_mode = True 
+        
 class Point(BaseModel):
     lat: float = 0.0
     lon: float = 0.0
@@ -165,10 +168,6 @@ FIELDS = ['mode_s', 'lat', 'lon', 'track', 'alt', 'speed',
           'origin', 'destination', 'iata', 'undefined2',
           'vertical_speed', 'icao', 'undefined3', 'airline']
 
-FLIGHT_STRING = ('Flight {flight} from {origin} to {destination}. '
-                 '{model} ({registration}) at {lat}, {lon} on altitude {alt}. '
-                 'Speed: {speed}. Track: {track}.')
-
 class BriefFlightBase(BaseModel):
     flight_id: Optional[str] = Field(default=None, primary_key=False)
     mode_s: Optional[str] = Field(default=None, primary_key=False)
@@ -190,7 +189,6 @@ class BriefFlightBase(BaseModel):
     icao: Optional[str] = Field(default=None, primary_key=False)
     undefined3: Optional[str] = Field(default=None, primary_key=False)
     airline: Optional[str] = Field(default=None, primary_key=False)
-
 
     @staticmethod
     def create(flight_id: str, data: list):

@@ -1,5 +1,4 @@
 import json
-from .my_models import *
 
 
 FLIGHTS_API_PATTERN = ('https://data-live.flightradar24.com/zones'
@@ -14,14 +13,3 @@ HEADERS = {'Connection': 'keep-alive',
 
 API_STRING = ("https://data-live.flightradar24.com/clickhandler/?flight={flight_id}")
 
-def flights_to_json(flights: List[BriefFlight]):
-    data = {}
-    for flight in flights:
-        data[flight.id] = {'id': flight.id, 'lat': flight.lat,
-                           'lon': flight.lon,
-                           'track': flight.track, 'speed': flight.speed,
-                           'pic': get_image_id(flight.track)}
-    return json.dumps(data)
-
-def get_image_id(track: int) -> int:
-    return 0
