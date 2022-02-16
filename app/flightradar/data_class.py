@@ -12,8 +12,7 @@ from .my_models import *
 
 from .parser import Parser
 
-from .utils import FLIGHTS_API_PATTERN, HEADERS, API_STRING, flights_to_json, get_image_id
-
+from .utils import FLIGHTS_API_PATTERN, HEADERS, API_STRING
 
 class Data:
     """
