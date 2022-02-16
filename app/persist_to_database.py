@@ -37,7 +37,7 @@ async def async_main(data):
         await session.commit()                
     await engine.dispose()
     
-async def get_data():
+async def get_one_response_from_db():
     engine = create_async_engine(
         "postgresql+asyncpg://postgres:password@localhost/foo",
         echo=False,
@@ -55,6 +55,7 @@ async def get_data():
             print(c1_response)
             print(c1_response.time_created)    
     await engine.dispose()
+
 
 async def get_session_async() -> AsyncSession:
     engine = create_async_engine(

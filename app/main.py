@@ -4,7 +4,7 @@ import asyncio
 
 from flightradar.models import *
 
-from persist_to_database import async_main, get_data
+from persist_to_database import async_main, get_one_response_from_db
 
 from flightradar.data_class import Data
 
@@ -27,5 +27,5 @@ if __name__ == "__main__":
     asyncio.run(async_main(data))
     
     # ACCESS DB AND SHOW FIRST RESPONSE
-    asyncio.run(get_data())
+    asyncio.run(get_one_response_from_db())
 

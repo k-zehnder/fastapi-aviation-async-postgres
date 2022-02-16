@@ -18,9 +18,9 @@ class Data:
         self.parser = Parser()
         self.briefs = []
         self.detailed = []  
-        self.point1 = Point({"lat" : 59.06, "lon" : 50.00}) # RUSSIA?
-        self.point2 = Point({"lat" : 30.97, "lon" : 36.46})
-        self.mapp = Area({"sw" : self.point1, "ne" : self.point2})
+        self.point1 = Point(**{"lat" : 59.06, "lon" : 50.00}) # RUSSIA?
+        self.point2 = Point(**{"lat" : 30.97, "lon" : 36.46})
+        self.mapp = Area(**{"sw" : self.point1, "ne" : self.point2})
         
         # PTOWN
         # {"lat" : 37.8, "lon" : 37.6} 
