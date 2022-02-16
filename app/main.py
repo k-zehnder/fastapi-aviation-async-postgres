@@ -15,7 +15,11 @@ if __name__ == "__main__":
     # LIVE DATA FROM FLIGHT RADAR
     data = Data()
     data = data.run()
+    
+    # UNCOMMENT FOR VERBOSE DATA OUTPUT
     # print(f"data {data}")
+    
+    # SANITY CHECK
     print(f'# brief returned: {len(data["briefs"])}')
     print(f'# detailed returned: {len(data["detailed"])}')
 
