@@ -31,7 +31,7 @@ class Data:
         # self.p1_coords = {"lat" : 37.8, "lon" : 37.6} 
         # self.p2_coords = {"lat" : -121.90, "lon" : -121.78}
         
-    def get_area(self, area: Area):
+    def get_area(self, area: Area) -> List[BriefFlightCreate]:
         """Returns all available flights within the specified area."""
         req = Request(FLIGHTS_API_PATTERN.format(*area),
                       headers=HEADERS)
@@ -40,7 +40,7 @@ class Data:
 
     def parse_flights(self, data: dict):
         """Finds all flights in the response and builds their instances."""
-        return [BriefFlightBase.create(key, data[key])
+        return [BriefFlightCreate.create(key, data[key])
                   for key in data if isinstance(data[key], list)]
           
     def get_data(self):
