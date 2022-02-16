@@ -8,8 +8,6 @@ from sqlmodel import Field, Relationship, Session, SQLModel, create_engine, sele
 
 from flightradar.my_models import *
 
-from flightradar.api import API
-
 from flightradar.data_class import Data
 
 

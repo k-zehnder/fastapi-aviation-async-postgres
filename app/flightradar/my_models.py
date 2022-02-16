@@ -95,6 +95,7 @@ class Airline(BaseModel):
     short: Optional[str] = Field(default=None, primary_key=False)
     url: Optional[str] = Field(default=None, primary_key=False)
     code: Optional[Code] = Field(default=None, primary_key=False)
+    
     class Config:
         orm_mode = True 
 
@@ -112,6 +113,7 @@ class Aircraft(BaseModel):
     msn: Optional[str] = Field(default=None, primary_key=False)
     images: Optional[List[str]] = Field(default=None, primary_key=False)
     model: Optional[Model]
+    
     class Config:
         orm_mode = True 
         allow_population_by_field_name = True
@@ -133,26 +135,6 @@ class AllFlightRead(BaseModel):
     db_data: List[DetailedFlight]
     class Config:
         orm_mode = True 
-        
-# class BriefFlightBase(BaseModel):
-#     # flight_id: Any = "23"
-#     lat: float = 23.4
-#     lon: float = 25.6
-#     track: int = 25
-#     speed: int = 250
-#     pic: str = "pic"
-#     id: Any = 1
-    
-#     @validator("speed")
-#     def speed_sanity_check(cls, speed):
-#         if speed > 1000:
-#             raise ImpossibleSpeedError(speed=speed)
-#         return speed
-    
-#     class Config:
-#         orm_mode = True
-        
-
 class Point(BaseModel):
     lat: float = 0.0
     lon: float = 0.0

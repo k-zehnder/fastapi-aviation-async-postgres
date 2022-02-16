@@ -8,45 +8,19 @@ import asyncio
 from textwrap import indent 
 import httpx
 
-from .api import API
-
 from .my_models import *
 
 from .parser import Parser
 
-from .flight import flights_to_json
-
-FLIGHTS_API_PATTERN = ('https://data-live.flightradar24.com/zones'
-                       '/fcgi/feed.js?bounds={},{},{},{}'
-                       '&faa=1&mlat=1&flarm=1&adsb=1&gnd=1&air=1'
-                       '&estimated=1&maxage=14400&gliders=1&stats=1')
-
-HEADERS = {'Connection': 'keep-alive',
-           'User-Agent': ('Mozilla/5.0 (Windows NT 10.0; Win64; '
-                          'x64) AppleWebKit/537.36 (KHTML, '
-                          'like Gecko) Chrome')}
-
-API_STRING = ("https://data-live.flightradar24.com/clickhandler/?flight={flight_id}")
-
-def flights_to_json(flights: List[BriefFlight]):
-    data = {}
-    for flight in flights:
-        data[flight.id] = {'id': flight.id, 'lat': flight.lat,
-                           'lon': flight.lon,
-                           'track': flight.track, 'speed': flight.speed,
-                           'pic': get_image_id(flight.track)}
-    return json.dumps(data)
+from .utils import FLIGHTS_API_PATTERN, HEADERS, API_STRING, flights_to_json, get_image_id
 
 
-def get_image_id(track: int) -> int:
-    return 0
 class Data:
     """
     Class for getting FlightRadar24 API data.
     """
     def __init__(self) -> None:
         self.API_STRING = API_STRING
-        self.api = API()
         self.parser = Parser()
         self.detailed = []  
         
