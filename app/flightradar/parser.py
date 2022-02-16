@@ -14,6 +14,7 @@ class Parser:
                 )
         
     def build_model(self, data):
+        # data = self._handle_missing_model(data)
         return Model(**data["aircraft"]["model"])
     
     def build_aircraft(self, data, model):
@@ -31,11 +32,6 @@ class Parser:
     def build_airline(self, data):
         data = self._handle_missing_airline(data)
         code = self.build_code(data)
-       
-        if  data["airline"].get("short") is None:
-            data["airline"].get("short", "short")
-            data["airline"]["short"] = "no_short"      
-        
         return Airline(
             name=data["airline"]["name"],
             short=data["airline"]["short"],
@@ -48,7 +44,15 @@ class Parser:
                 airline=airline.dict(),
                 aircraft=aircraft.dict()
         )
-        
+            
+    def _handle_missing_model(self, data):
+        # if data["aircraft"]["model"]:
+        #     return data
+        if data.get("model") is None:
+            data["airline"] = data.get("airline", "airline")
+            data["airline"] = {"name" : "no_name", "short": "no_short"}
+        return data
+
     def _handle_missing_airline(self, data):
         if data.get("airline") is None:
             data["airline"] = data.get("airline", "airline")
@@ -57,5 +61,9 @@ class Parser:
         if data["airline"].get("code") is None:
             data["airline"].get("code", "code")
             data["airline"]["code"] = {"iata" : "no_iata", "icao": "no_icao"}
+        
+        if  data["airline"].get("short") is None:
+            data["airline"].get("short", "short")
+            data["airline"]["short"] = "no_short"   
         
         return data

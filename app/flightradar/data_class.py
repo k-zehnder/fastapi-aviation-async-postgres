@@ -28,8 +28,8 @@ class Data:
         self.p2_coords = {"lat" : 30.97, "lon" : 36.46}
         
         # PTOWN
-        # p1_coords = {"lat" : 37.8, "lon" : 37.6} 
-        # p2_coords = {"lat" : -121.90, "lon" : -121.78}
+        # self.p1_coords = {"lat" : 37.8, "lon" : 37.6} 
+        # self.p2_coords = {"lat" : -121.90, "lon" : -121.78}
         
     def get_area(self, area: Area):
         """Returns all available flights within the specified area."""
@@ -50,6 +50,7 @@ class Data:
         mapp = {"sw" : p1, "ne" : p2}
         area = Area(**mapp)
         
+        # briefs = self.get_area(*)
         return self.get_ids(self.get_area(area))
 
     def get_ids(self, briefs):
