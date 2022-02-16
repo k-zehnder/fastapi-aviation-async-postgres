@@ -1,15 +1,11 @@
 from urllib.request import urlopen, Request
 import datetime
-from distutils.command.build import build
 import json
 import asyncio
-from textwrap import indent 
 import httpx
 
 from .models import *
-
 from .parser import Parser
-
 from .utils import FLIGHTS_API_PATTERN, HEADERS, API_STRING
 
 
@@ -53,7 +49,8 @@ class Data:
         mapp = {"sw" : p1, "ne" : p2}
         area = Area(**mapp)
         
-        return self.get_ids(self.get_area(area)) # self.get_area(area) returns List[BriefFlightCreate]
+        # self.get_area(area) returns List[BriefFlightCreate]
+        return self.get_ids(self.get_area(area)) 
 
     def get_ids(self, briefs):
             return [flight.flight_id for flight in briefs]            
