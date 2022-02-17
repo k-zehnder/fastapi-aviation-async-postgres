@@ -24,7 +24,7 @@ if __name__ == "__main__":
     print(f'# detailed returned: {len(data["detailed"])}')
 
     # PERSIST DATA TO POSTGRES
-    asyncio.run(async_main(data))
+    asyncio.run(async_main(data)) 
     
     # ACCESS DB AND SHOW FIRST RESPONSE
     asyncio.run(get_one_response_from_db())
@@ -32,3 +32,4 @@ if __name__ == "__main__":
 
     # ACCESS DB AND GET ALL BRIEF FLIGHTS
     asyncio.run(get_all_briefs())
+ 

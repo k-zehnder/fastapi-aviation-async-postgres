@@ -18,7 +18,7 @@ async def async_main(data):
     )
     
     async with engine.begin() as conn:
-        await conn.run_sync(SQLModel.metadata.drop_all)
+        # await conn.run_sync(SQLModel.metadata.drop_all)
         print("NOT REMOVING DB")
         await conn.run_sync(SQLModel.metadata.create_all)
 
@@ -27,7 +27,6 @@ async def async_main(data):
     )
     async with async_session() as session:
         async with session.begin():
-            # print(data["detailed"])
             r1 = Response(
                     name="controller1",
                     time_created=datetime.datetime.now(),
