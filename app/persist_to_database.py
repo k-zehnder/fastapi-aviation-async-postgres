@@ -27,7 +27,7 @@ async def create_fake_data(response: Response) -> None:
 async def async_main(data):
     engine = create_async_engine(
         "postgresql+asyncpg://postgres:password@localhost/foo",
-        echo=False,
+        echo=False
     )
     
     async with engine.begin() as conn:
@@ -68,6 +68,7 @@ async def get_one_response_from_db():
             statement = select(Response).where(Response.name=="controller1")
             result = await session.execute(statement)
             c1_response = result.scalars().first()
+            print(c1_response)
     await engine.dispose()
 
 async def get_all_briefs():
@@ -85,6 +86,7 @@ async def get_all_briefs():
             statement = select(BriefFlight)
             result = await session.execute(statement)
             all_briefs = result.scalars().first()
+            print(all_briefs)
     await engine.dispose()
     
 async def get_session_async() -> AsyncSession:
