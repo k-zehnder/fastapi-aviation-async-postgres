@@ -29,7 +29,6 @@ if __name__ == "__main__":
     # ACCESS DB AND SHOW FIRST RESPONSE
     asyncio.run(get_one_response_from_db())
 
-
     # ACCESS DB AND GET ALL BRIEF FLIGHTS
     asyncio.run(get_all_briefs())
  
