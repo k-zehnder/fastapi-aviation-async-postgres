@@ -46,7 +46,9 @@ async def async_main(data):
                     flights=[DetailedFlight(identification=flight.identification.identification, airline_name=flight.airline.name, airplane_code=flight.aircraft.model.code) for flight in data["detailed"]],
                     briefs=[BriefFlight(flight_id=flight.flight_id, radar=flight.radar, vertical_speed=flight.vertical_speed, lat=flight.lat, registration=flight.registration, icao=flight.icao, lon=flight.lon, track=flight.track, origin=flight.origin, airline=flight.airline, alt=flight.alt, destination=flight.destination, speed=flight.speed, iata=flight.iata, squawk=flight.squawk) for flight in data["briefs"]]
             )    
-            await create_fake_data(r1)            
+            create_data = False
+            if create_data:
+                await create_fake_data(r1)            
             session.add(r1)
         await session.commit()                
     await engine.dispose()
@@ -66,8 +68,6 @@ async def get_one_response_from_db():
             statement = select(Response).where(Response.name=="controller1")
             result = await session.execute(statement)
             c1_response = result.scalars().first()
-            # print(c1_response)
-            # print(c1_response.time_created)    
     await engine.dispose()
 
 async def get_all_briefs():
@@ -85,7 +85,6 @@ async def get_all_briefs():
             statement = select(BriefFlight)
             result = await session.execute(statement)
             all_briefs = result.scalars().first()
-            # print(all_briefs)
     await engine.dispose()
     
 async def get_session_async() -> AsyncSession:
