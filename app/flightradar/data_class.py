@@ -38,12 +38,10 @@ class Data:
         """Finds all flights in the response and builds their instances."""
         briefs = [BriefFlightCreate.create(key, data[key])
                   for key in data if isinstance(data[key], list)]
-        for b in briefs:
-            self.briefs.append(b)
+        self.briefs.extend(list(briefs))
         return briefs
           
     def get_data(self):
-        # NOTE: self.get_area(area) returns List[BriefFlightCreate]
         return self.get_ids(self.get_area(self.mapp)) 
 
     def get_ids(self, briefs):
@@ -60,7 +58,6 @@ class Data:
         airline = self.parser.build_airline(data)        
         detailed = self.parser.build_detailed(identification, airline, aircraft)                 
         self.detailed.append(detailed) 
-
 
     async def async_main(self):
         overhead_ids = self.get_data()
