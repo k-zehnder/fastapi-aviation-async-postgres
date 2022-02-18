@@ -13,14 +13,15 @@ from sqlmodel import Field, Relationship, Session, SQLModel, create_engine, sele
 from flightradar.models import *
 
 from flightradar.data_class import Data
+from fastapi.encoders import jsonable_encoder
 
 
 async def create_fake_data(response: Response) -> None:
     out_data = {
-        "briefs_out" : [brief.dict() for brief in response.briefs],
+        "briefs_out" : [brief.dict() for brief in response.briefs], # use jsonable_encoder
         "detailed_out" : [flight.dict() for flight in response.flights]
     }
-    with open("sample_data/dummy_data.json", "w") as outfile:
+    with open("pyflycli_sample_data/dummy_data.json", "w") as outfile:
         json.dump(out_data, outfile)
         
 
