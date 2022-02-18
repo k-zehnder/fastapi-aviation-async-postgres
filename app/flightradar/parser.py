@@ -16,7 +16,7 @@ class Parser:
     def build_model(self, data):
         if data["aircraft"].get("model") is None:
             data["aircraft"]["model"] = data["model"].get("model", "model")
-            data["aircraft"]["model"] = {"name" : "no_name", "short": "no_short"}
+            data["aircraft"]["model"] = {"code" : "no_code", "text": "no_text"}
         return Model(**data["aircraft"]["model"])
     
     def build_aircraft(self, data, model):
