@@ -47,11 +47,6 @@ class Parser:
                 aircraft=aircraft.dict()
         )
 
-    def _handle_missing_airline(self, data):
-        if data.get("airline") is None:
-            data["airline"] = data.get("airline", "airline")
-            data["airline"] = {"name" : "no_name", "short": "no_short"}
-
         if data["airline"].get("code") is None:
             data["airline"].get("code", "code")
             data["airline"]["code"] = {"iata" : "no_iata", "icao": "no_icao"}
